@@ -4,9 +4,15 @@
  * T_TAILLE : la T_TAILLE des cotés du damier.
  * H_TAILLE : le nombre d'instantanés du damier à conserver 
  *			  (taille de l'historique).
+ * AUTHOR :	  le nom et les coordonnées du développeur.
  */
 #define T_TAILLE	7
 #define H_TAILLE 	25
+#define AUTHOR 		"Quentin Barrand <quentin.barrand@ensiie.fr>"
+
+
+/* Déclaration des fonctions utilisées */
+void* memmove(void*, const void*, size_t);
 
 
 /* Représente les trois états possibles d'une case. */
@@ -49,7 +55,8 @@ damier initJeu()
 		{VIDE, VIDE, VIDE, PION,  VIDE, VIDE, VIDE}
 	};
 
-	// memmove(jeu.table, temp, sizeof(temp));
+	memmove(jeu.table, temp, sizeof(temp));
+	
 	jeu.nb_pion = 24;
 
 	return jeu;
@@ -58,10 +65,10 @@ damier initJeu()
 
 /* Affiche le damier sur la sortie standard.
  * Paramètres : 
- *		-une instance de Damier
+ *		jeu : une instance du type damier
  * Retourne : code de statut
- *		 0 : l'affichage s'est déroulé correctement
- *		-1 : le damier contient des valeurs non prévues
+ *		0 : l'affichage s'est déroulé correctement
+ *		1 : le damier contient des valeurs non prévues
  */
 int afficher(damier jeu)
 {
@@ -75,7 +82,7 @@ int afficher(damier jeu)
 	printf("\n   -");
 
 	for(f = 1; f < 8; f++)
-		printf("----", f);
+		printf("----");
 
 	printf("\n");
 
@@ -118,18 +125,18 @@ int afficher(damier jeu)
 
 /*
  * Retourne : un code de statut
- *		-1 : la case de départ n'est pas occupée par un pion
- *		-2 : la case d'arrivée n'est pas libre
+ *		1 : la case de départ n'est pas occupée par un pion
+ *		2 : la case d'arrivée n'est pas libre
  */
 int jouer(damier* jeu, coordonnees depart, coordonnees arrivee)
 {
 	/* Test case de départ */
 	if(jeu->table[depart.a][depart.o] != PION)
-		return -1;
+		return 1;
 
 	/* Test case d'arrivée */
 	if(jeu->table[arrivee.a][arrivee.o] != LIBRE)
-		return -1;
+		return 2;
 
 	return 0;
 }
@@ -140,19 +147,59 @@ int main(int arg, char** argv)
 	damier jeu = initJeu();
 	damier historique[H_TAILLE];
 
-	historique[0] = jeu;
+	int i;
 
-	afficher(jeu);
+	printf("\nBienvenue dans le jeu du Solitaire !\n\n");
 
-	coordonnees jinputD;
-	jinputD.a = 3;
-	jinputD.o = 3;
+	for(i = 0; jeu.nb_pion != 1; i++)
+	{
+		historique[i] = jeu;
 
-	coordonnees jinputA;
-	jinputA.a = 3;
-	jinputA.o = 3;
+		printf("Tour n°%d - grille de jeu :\n", i + 1);
 
-	printf("%d", jouer(&jeu, jinputD, jinputA));
+		if(afficher(jeu) != 0)
+		{
+			printf("Le damier contien des valeurs non prévues.");
+			printf("Sortie du programme.\n");
+			printf("Merci d'envoyer un rapport d'erreur à " AUTHOR ".");
+
+			return 2;
+		}
+
+		coordonnees input_d, input_a;
+
+		printf("Entrez les coordonnées du déplacement :");
+		
+		printf("\nAbscisse de la case de départ : ");
+		scanf("%d", &input_d.a);
+		
+		printf("Ordonnée de la case de départ : ");
+		scanf("%d", &input_d.o);
+		
+		printf("Abscisse de la case d'arrivée : ");
+		scanf("%d", &input_a.a);
+
+		printf("Ordonnée de la case d'arrivée : ");
+		scanf("%d\n\n", &input_a.o);
+
+		switch(jouer(&jeu, input_d, input_a))
+		{
+			case 0:
+				break;
+
+			case -1:
+				printf("La case de départ n'est pas occupée par un pion. Réessayez.\n");
+				break;
+
+			case -2:
+				printf("La case d'arrivée n'est pas libre. Réessayez.\n");
+				break;
+
+			//case -3:
+		}
+	}
+
+	printf("Le jeu est terminé, merci d'avoir joué !\n");
 
 	return 0;
 }
