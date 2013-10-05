@@ -244,6 +244,8 @@ int jouer(damier* jeu, options* config,
 	jeu->table[arrivee.a][arrivee.o] = PION;
 	jeu->table[centrale.a][centrale.o] = LIBRE;
 
+	jeu->nb_pion -= 1;
+
 	return 0;
 }
 
