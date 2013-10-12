@@ -1,9 +1,9 @@
-/** \file util.h
- * Header pour le fichier util.c.
+/**
+ * \file util.h
+ * \brief Header pour le fichier util.c.
  *
  * \author Quentin Barrand <quentin.barrand@ensiie.fr>
  */
-
 #ifndef UTIL_H_FILE
 #define UTIL_H_FILE
 
@@ -12,10 +12,7 @@
 int printf(const char*, ...);
 
 
-/** \struct options
- *
- * Options du programme. 
- */
+/** Options du programme. */
 typedef struct options 
 {
 	/** Déplacements horizontaux et verticaux */

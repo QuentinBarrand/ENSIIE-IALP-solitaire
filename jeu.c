@@ -1,9 +1,9 @@
-/** \file jeu.c 
- * Fonctions relatives à la gestion du jeu.
+/** 
+ * \file jeu.c 
+ * \brief Fonctions relatives à la gestion du jeu.
  *
  * \author Quentin Barrand <quentin.barrand@ensiie.fr>
  */
-
 #include "util.h"
 #include "jeu.h"
 

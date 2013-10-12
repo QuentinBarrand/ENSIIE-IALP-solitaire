@@ -5,7 +5,6 @@
  * \author Quentin Barrand <quentin.barrand@ensiie.fr>
  * \version 1.1
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 

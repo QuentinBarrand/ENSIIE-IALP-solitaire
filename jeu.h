@@ -1,9 +1,9 @@
-/** \file jeu.h
- * Header pour le fichier jeu.c.
+/** 
+ * \file jeu.h
+ * \brief Header pour le fichier jeu.c.
  *
  * \author Quentin Barrand <quentin.barrand@ensiie.fr>
  */
-
 #ifndef JEU_H_FILE
 #define JEU_H_FILE
 

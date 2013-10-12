@@ -1,32 +1,49 @@
-=== README ===
+# README #
 Ce logiciel permet de jouer au Solitaire.
 
-=== AUTHORS ===
+## VERSION ##
+Version 2.0
+
+## AUTHORS ##
 Quentin Barrand <quentin.barrand@ensiie.fr>
 
-=== CHANGELOG ===
-Version initiale
+## CHANGELOG ##
+### 2.0 ###
+* Ajout du fichier de configuration du jeu.
+* Amélioration de l'ergonomie.
+* Correction de bugs.
 
-=== INSTALLATION ===
+### 1.0 ###
+Version initiale.
+
+## DOWNLOAD ##
+Le code source de ce programme est disponible à l'adresse
+http://git.quentinbarrand.com/?p=ENSIIE/IALP/project.git
+
+## DOCUMENTATION ##
+La documentation exhaustive du code de ce programme est disponible à l'adresse
+http://doc.quentinbarrand.com/ENSIIE/IALP/Projet/
+
+## INSTALLATION ##
 - Se placer dans le répertoire de décompression de l'archive tar
-- Compiler le programme : $ gcc -Wall -o Solitaire solitaire.c
+- Compiler le programme : $ make
 
-=== EXECUTION ===
+## EXECUTION ##
 - Se placer dans le répertoire dans lequel le programme a été compilé
-- Exécuter $ ./Solitaire 
-	- option -h : affiche l'usage du programme et le quitte.
+- Exécuter $ ./solitaire 
+    - option -h : affiche l'usage du programme et le quitte.
 	- option -n : les déplacements horizontaux et verticaux sont permis.
 	- option -d : les déplacements en diagonale sont permis.
 
-	Les options -n et -d peuvent être utilisées simultanément.
+Les options -n et -d peuvent être utilisées simultanément.
 
-=== COPYING / LICENSE ===
+## COPYING / LICENSE ##
 Ce programme est livré sous les termes de la licence GNU GPL v2.0
-Une copie de cette licence est disponible dans le fichier README et 
+Une copie de cette licence est disponible dans le fichier LICENSE et 
 à l'adresse suivante :
 https://www.gnu.org/licenses/gpl-2.0.html
 
-=== BUGS ====
+## BUGS ##
 Aucun bug connu. Testé sous GNU / Linux kernel 3.5.0-41 x86_64.
 
 Merci de reporter les bugs au développeur, 

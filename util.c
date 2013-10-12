@@ -1,12 +1,13 @@
-/** \file util.c 
- * Fonctions utilitaires de l'application.
+/** 
+ * \file util.c 
+ * \brief Fonctions utilitaires de l'application.
  *
  * \author Quentin Barrand <quentin.barrand@ensiie.fr>
  */
 #include "util.h"
 
 
-/** Affiche l'usage du programme/
+/** Affiche l'usage du programme.
  *
  * \param executable le nom du programme (correspond à <tt>argv[0]</tt>).
  */
@@ -76,7 +77,7 @@ int getOptions(options* config, int argc, char** argv)
 }
 
 
-/** Lit la configuration dans le fichier de configuration.
+/** Lit la configuration du damier dans le fichier de configuration.
  *
  * \param config les options courantes de l'application.
  */
