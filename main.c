@@ -8,8 +8,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "util.h"
-#include "jeu.h"
+#include "lib/util.h"
+#include "lib/jeu.h"
 
 /** Le nombre d'instantanés du damier à conserver (taille de l'historique). */
 #define H_TAILLE 100

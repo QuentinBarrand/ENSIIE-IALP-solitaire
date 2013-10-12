@@ -2,22 +2,22 @@ GCC_OPTS = -Wall -Wextra -DDEBUG -g -O2
 
 .PHONY : doc
 
-all: main.c libsolitaire.a
-	gcc -o solitaire $(GCC_OPTS) main.c libsolitaire.a
+all: libsolitaire.a
+	gcc -o solitaire $(GCC_OPTS) main.c lib/libsolitaire.a
 	make clean
 
 libsolitaire.a: jeu.o util.o
-	ar -cr $@ jeu.o util.o
+	cd lib/; ar -cr $@ jeu.o util.o
 
-jeu.o: jeu.c jeu.h
-	gcc -c $(GCC_OPTS) jeu.c -o $@
+jeu.o:
+	cd lib/; gcc -c -o $@ $(GCC_OPTS) jeu.c
 
-util.o: util.c util.h
-	gcc -c $(GCC_OPTS) util.c -o $@
+util.o:
+	cd lib/; gcc -c -o $@ $(GCC_OPTS) util.c
 
-# You need a Makefile-formatted Makedoc file to call his target
+# You need a Makefile-formatted Makedoc file to call this target
 doc:
 	make -f Makedoc
 
 clean:
-	rm -rf *.a *.o
+	cd lib; rm -f *.a *.o
