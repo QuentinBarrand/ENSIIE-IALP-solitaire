@@ -1,4 +1,8 @@
-GCC_OPTS = -Wall -Wextra -DDEBUG -g -O2
+ifeq ($(SOLITAIRE_FLAG),DEV)
+	GCC_OPTS = -Wall -Wextra -DDEBUG -g -O2
+else
+	GCC_OPTS = -O3
+endif
 
 .PHONY : doc
 
@@ -18,6 +22,10 @@ util.o:
 # You need a Makefile-formatted Makedoc file to call this target
 doc:
 	make -f Makedoc
+
+dev:
+	export SOLITAIRE_FLAG="DEV"
+	make
 
 clean:
 	cd lib; rm -f *.a *.o
