@@ -10,19 +10,11 @@
 
 #include "lib/util.h"
 #include "lib/jeu.h"
-
-/** Le nombre d'instantanés du damier à conserver (taille de l'historique). */
-#define H_TAILLE 100
-
-/** Le nom et les coordonnées du développeur. */
-#define AUTEUR "Quentin Barrand <quentin.barrand@ensiie.fr>"
+#include "lib/consts.h"
 
 /** Fonction main : point d'entrée de l'application. */
 int main(int argc, char** argv) 
 {
-    /** Variable interne utilisée pour la saisie. */
-    static char cont;
-
     /* Import des paramètres de la ligne de commande */
     options config;
     switch(getOptions(&config, argc, argv))
@@ -34,8 +26,9 @@ int main(int argc, char** argv)
             return EXIT_SUCCESS;
 
         case 2:
-            printf("Paramètres de la ligne de commande incorrects.\n");
+            fprintf(stderr, "Paramètres de la ligne de commande incorrects.\n");
             help(argv[0]);
+
             return EXIT_FAILURE;
     }
 
@@ -49,10 +42,31 @@ int main(int argc, char** argv)
     }
     
     /* Création du damier */
-    damier jeu = initJeu();
+    damier jeu;
+    switch(initJeu(&config, &jeu))
+    {
+        case 1:
+            fprintf(stderr, "Le fichier de configuration contient des valeurs "
+                "non prévues.\n");
+
+            return EXIT_FAILURE;
+
+        case 2:
+            fprintf(stderr, "Le fichier de configuration contient des lignes "
+                "dont la longueur n'est pas identique.\n");
+
+            return EXIT_FAILURE;
+    }
+
     damier historique[H_TAILLE];
 
-    int i;
+    /* Variable interne utilisée pour la saisie. */
+    char cont;
+    
+    /* Chaîne saisie par l'utilisateur. */
+    char userinput[100];
+
+    int i, read, coord[4];
 
     printf("Bienvenue dans le jeu du Solitaire !");
 
@@ -62,7 +76,7 @@ int main(int argc, char** argv)
 
         printf("\n\nTour n°%d - grille de jeu :\n", i + 1);
 
-        if(afficher(jeu) != 0)
+        if(afficher(jeu, config) != 0)
         {
             printf("Le damier contient des valeurs non prévues." 
                    "Sortie du programme.\n" 
@@ -73,68 +87,98 @@ int main(int argc, char** argv)
 
         cont = 0;
 
-        /* Menu principal */
-        while(cont != 'c')
-        {
-            printf("Action ? ('c' continuer, 'p' (précédent), "
-                "q (quitter)) : ");
-
-            /* Lire une chaine nous permet de vider l'intégralité du buffer 
-             * de stdin sans avoir des \n qui déclenchent des tours de boucle
-             * supplémentaires.
-             */
-            scanf("%s", &cont);
-
-            switch(cont)
-            {
-                case 'c':
-                    break;
-
-                case 'p':
-                    if(i > 0)
-                    {
-                        i--;
-                        printf("Retour au tour n°%d\n", i + 1);
-                        jeu = historique[i];
-                        afficher(jeu);
-                        printf("\n\n");
-                    }
-                    else
-                        printf("Etape n°%d : impossible de charger le "
-                            "tour précédent.\n", i);
-
-                    break;
-
-                case 'q':
-                    printf("Le jeu est terminé, merci d'avoir joué !\n");
-                    return EXIT_SUCCESS;
-
-                default:
-                    printf("Caractère non reconnu.\n");
-            }
-        }
-
         coordonnees input_d, input_a;
 
-        printf("\nEntrez les coordonnées du déplacement :");
+        /* Menu principal */
+        while(cont != 'q')
+        {
+            printf("Jouer (h pour l'aide) : ");
 
-        printf("\nAbscisse de la case de départ : ");
-        scanf("%d", &input_d.a);
+            char userinput[MAX_INPUT], c = 0;
+            read = 0;
 
-        printf("Ordonnée de la case de départ : ");
-        scanf("%d", &input_d.o);
+            while((c = getchar()) != '\n' && i < MAX_INPUT - 1)
+                userinput[read++] = c;
 
-        printf("Abscisse de la case d'arrivée : ");
-        scanf("%d", &input_a.a);
+            userinput[read + 1] = 0;
+            
+            cont = userinput[0];
 
-        printf("Ordonnée de la case d'arrivée : ");
-        scanf("%d", &input_a.o);
+            #ifdef DEBUG
+            printf("%d caractères lus.\n", read);
+            #endif
 
-        /* Mise en conformité avec les coordonnées [O, ...] du damier */
-        input_d.a -= 1;
-        input_d.o -= 1;
-        input_a.a -= 1;
-        input_a.o -= 1;
+            /* Aucun caractère lu : on affiche l'aide */
+            if(read == 0)
+            {
+                read = 1;
+                cont = 'h';
+            }
+
+            /* Un seul caractère : une commande */
+            if(read == 1)
+            {
+                switch(cont)
+                {
+                    case 'h':
+                        printf("Aide :\n"
+                            "AOAO : coordonnées du déplacement\n"
+                            "\tA : abscisse (A - Z)\n"
+                            "\tO : ordonnée (1 - 26)\n"
+                            "p : Annuler le déplacement précédent\n"
+                            "q : Quitter\n");
+                        break;
+
+                    case 'p':
+                        if(i > 0)
+                        {
+                            i--;
+                            printf("Retour au tour n°%d\n", i + 1);
+                            jeu = historique[i];
+                            afficher(jeu, config);
+                            printf("\n\n");
+                        }
+                        else
+                            printf("Etape n°%d : impossible de charger le "
+                                "tour précédent.\n", i + 1);
+
+                        break;
+
+                    case 'q':
+                        printf("Le jeu est terminé, merci d'avoir joué !\n");
+                        return EXIT_SUCCESS;
+                }
+            }
+
+            /* Entre 4 et 6 caractères : des coordonnées */
+            if(read >= 4 && read <= 6)
+            {
+                int result = toCoord(&userinput, &coord, config);
+
+                switch(result)
+                {
+                    case 0:
+                        break;
+
+                    case 1:
+                        fprintf(stderr, "Votre saisie contient des caractères "
+                            "non valides.\n");
+                        continue;
+
+                    case 2:
+                        fprintf(stderr, "Votre saisie contient des caractères "
+                            "hors du damier.\n");
+                        continue;
+                }
+
+                input_d.a = coord[0] - 1;
+                input_d.o = coord[1] - 1;
+                input_a.a = coord[2] - 1;
+                input_a.o = coord[3] - 1;
+
+                break;
+            }
+        }
 
         printf("\n");
 

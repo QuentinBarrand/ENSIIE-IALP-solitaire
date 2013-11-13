@@ -1,3 +1,5 @@
+/** \page README
+
 # README #
 Ce logiciel permet de jouer au Solitaire.
 
@@ -48,3 +50,5 @@ Aucun bug connu. Testé sous GNU / Linux kernel 3.5.0-41 x86_64.
 
 Merci de reporter les bugs au développeur, 
 Quentin Barrand <quentin.barrand@ensiie.fr>
+
+*/

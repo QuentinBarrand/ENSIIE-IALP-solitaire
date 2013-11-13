@@ -1,14 +1,10 @@
-ifeq ($(SOLITAIRE_FLAG),DEV)
-	GCC_OPTS = -Wall -Wextra -DDEBUG -g -O2
-else
-	GCC_OPTS = -O3
-endif
+GCC_OPTS = -O3
 
 .PHONY : doc
 
 all: libsolitaire.a
 	gcc -o solitaire $(GCC_OPTS) main.c lib/libsolitaire.a
-	make clean
+	make clean-objects
 
 libsolitaire.a: jeu.o util.o
 	cd lib/; ar -cr $@ jeu.o util.o
@@ -24,8 +20,11 @@ doc:
 	make -f Makedoc
 
 dev:
-	export SOLITAIRE_FLAG="DEV"
-	make
+	make GCC_OPTS="-Wall -Wextra -DDEBUG -g -O2"
 
 clean:
+	make clean-objects
+	rm solitaire
+
+clean-objects:
 	cd lib; rm -f *.a *.o
