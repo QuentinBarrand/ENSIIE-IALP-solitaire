@@ -15,6 +15,10 @@
 /** Fonction main : point d'entrée de l'application. */
 int main(int argc, char** argv) 
 {
+    #ifdef DEBUG
+    printf("Mode DEBUG activé\n");
+    #endif
+
     /* Import des paramètres de la ligne de commande */
     options config;
     switch(getOptions(&config, argc, argv))
@@ -32,30 +36,24 @@ int main(int argc, char** argv)
             return EXIT_FAILURE;
     }
 
-    if(config.n == 0 && config.d == 0)
-    {
-        printf("Vous devez autoriser au moins un type de déplacement. "
-            "Lancez %s -h ou consultez le fichier README pour obtenir "
-            "de l'aide.\n", argv[0]);
-
-        return EXIT_FAILURE;
-    }
-    
     /* Création du damier */
     damier jeu;
-    switch(initJeu(&config, &jeu))
+    switch(initJeu(&config, &jeu, FALSE))
     {
         case 1:
             fprintf(stderr, "Le fichier de configuration contient des valeurs "
-                "non prévues.\n");
+                "non prévues. Utilisation du damier par défaut.\n");
 
-            return EXIT_FAILURE;
+            initJeu(&config, &jeu, TRUE);
+            break;
 
         case 2:
             fprintf(stderr, "Le fichier de configuration contient des lignes "
-                "dont la longueur n'est pas identique.\n");
+                "dont la longueur n'est pas identique. Utilisation du damier "
+                "par défaut.\n");
 
-            return EXIT_FAILURE;
+            initJeu(&config, &jeu, TRUE);
+            break;
     }
 
     damier historique[H_TAILLE];
@@ -87,8 +85,6 @@ int main(int argc, char** argv)
 
         cont = 0;
 
-        coordonnees input_d, input_a;
-
         /* Menu principal */
         while(cont != 'q')
         {
@@ -100,13 +96,8 @@ int main(int argc, char** argv)
             while((c = getchar()) != '\n' && i < MAX_INPUT - 1)
                 userinput[read++] = c;
 
-            userinput[read + 1] = 0;
-            
+            userinput[read + 1] = 0;  
             cont = userinput[0];
-
-            #ifdef DEBUG
-            printf("%d caractères lus.\n", read);
-            #endif
 
             /* Aucun caractère lu : on affiche l'aide */
             if(read == 0)
@@ -153,7 +144,7 @@ int main(int argc, char** argv)
             /* Entre 4 et 6 caractères : des coordonnées */
             if(read >= 4 && read <= 6)
             {
-                int result = toCoord(&userinput, &coord, config);
+                int result = toCoord(userinput, coord, config);
 
                 switch(result)
                 {
@@ -171,18 +162,13 @@ int main(int argc, char** argv)
                         continue;
                 }
 
-                input_d.a = coord[0] - 1;
-                input_d.o = coord[1] - 1;
-                input_a.a = coord[2] - 1;
-                input_a.o = coord[3] - 1;
-
                 break;
             }
         }
 
         printf("\n");
 
-        switch(jouer(&jeu, &config, input_d, input_a))
+        switch(jouer(&jeu, &config, coord))
         {
             case 1:
                 printf("La case de départ n'est pas occupée par un pion. "
@@ -209,6 +195,6 @@ int main(int argc, char** argv)
         }
     }
 
-    printf("Le jeu est terminé, merci d'avoir joué !\n");
+    printf("Vous avez gagné, félicitations ! Merci d'avoir joué.\n");
     return EXIT_SUCCESS;
 }

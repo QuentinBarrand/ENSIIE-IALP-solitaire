@@ -15,61 +15,70 @@
  * \return une instance de damier contenant une matrice table initialisée
  *    conformément au sujet.
  */
-int initJeu(options* config, damier* jeu)
+int initJeu(options* config, damier* jeu, int def)
 {
     const int FUNC_SUCCESS         = 0;
     const int FUNC_ILLEGAL_CHAR    = 1;
     const int FUNC_LINES_NOT_EQUAL = 2;
+    const int FUNC_TOO_FEW_LINES   = 3;
 
-    if(config->confExists == TRUE)
+    if(config->confExists == TRUE && def == FALSE)
     {
+        int i = 0, l, c, refWidth;
+        char tabString[MAX_TAILLE][MAX_TAILLE];
+
         FILE* stream = fopen(config->confPath, "r");
 
-        char* tabString[MAX_TAILLE], currentString;
-        int i = 0, j = 0, c = 0, refLength = 0;
+        while(fscanf(stream, "%26s", tabString[i]) != EOF) i++;
 
-        while(fscanf(stream, "%s", &currentString) != EOF && i < MAX_TAILLE)
-        {
-            strcpy(tabString[i], currentString);
-            i++;
-        }
+        if(i == 0) return FUNC_TOO_FEW_LINES;
 
         fclose(stream);
 
-        refLength = strlen(tabString[0]);
+        #ifdef DEBUG
+        printf("Fichier lu (%d lignes) : \n", i);
+        for(l = 0; l < i; l++)
+            printf("%s\n", tabString[l]);
+        #endif
 
-        /* Vérification de la conformité du damier lu */
-        for(j = 1; j <= i; j++)
-            if(strlen(tabString[j]) != refLength)
+        refWidth = strlen(tabString[0]);
+
+        /* Vérification de la longueu des lignes du damier lu */
+        for(l = 0; l < i; l++)
+            if(strlen(tabString[l]) != refWidth)
                 return FUNC_LINES_NOT_EQUAL;
 
-        config->confWidth = refLength;
+        config->confWidth = refWidth;
         config->confLength = i;
 
-        jeu->table = malloc(i * refLength);
+        /* Allocation de jeu->table */
+        jeu->table = malloc(config->confWidth * sizeof(cases*));
 
-        /* Import du damier lu dans la configuration */
-        for(j = 0; j < i; j++)
+        for(l = 0; l < config->confWidth; l++)
+            jeu->table[l] = malloc(config->confLength * sizeof(cases));
+
+        for(l = 0; l < config->confLength; l++)
         {
-            for(c = 0; c < refLength; c++) // ;-)
+            for(c = 0; c < config->confWidth; c++) // ;-)
             {
-                switch(tabString[j][c]) 
+                switch(tabString[l][c]) 
                 {
                     case 'v':
                     case 'V':
-                        jeu->table[j][c] = VIDE;
+                        jeu->table[c][l] = VIDE;
                         break;
                     
                     case '.':
-                        jeu->table[j][c] = LIBRE;
+                        jeu->table[c][l] = LIBRE;
                         break;
 
                     case '*':
-                        jeu->table[j][c] = PION;
+                        jeu->table[c][l] = PION;
                         break;
 
                     default:
                         return FUNC_ILLEGAL_CHAR;
+                        break;
                 }
             }
         }
@@ -95,17 +104,16 @@ int initJeu(options* config, damier* jeu)
         jeu->table = malloc(T_TAILLE * sizeof(cases*));
 
         for(i = 0; i < T_TAILLE; i++)
-        {
             jeu->table[i] = malloc(T_TAILLE * sizeof(cases));
+
+        for(i = 0; i < T_TAILLE; i++)
             for(j = 0; j < T_TAILLE; j++)
-                jeu->table[i][j] = temp[i][j];
-        }
+                jeu->table[j][i] = temp[i][j];
         
         jeu->nb_pion = 24;
     
         config->confWidth = T_TAILLE;
         config->confLength = T_TAILLE;
-
     }
 
     return FUNC_SUCCESS;
@@ -116,8 +124,8 @@ int initJeu(options* config, damier* jeu)
  * \param jeu une instance du type damier.
  * \param config l'instance d'options qui configure l'application.
  * \return code de statut
- *    - 0 l'affichage s'est déroulé correctement
- *    - 1 le damier contient des valeurs non prévues
+ *    - 0 l'affichage s'est déroulé correctement.
+ *    - 1 le damier contient des valeurs non prévues.
  */
 int afficher(damier jeu, options config)
 {
@@ -130,7 +138,7 @@ int afficher(damier jeu, options config)
 
     printf("\n   -");
 
-    for(f = 0; f < config.confLength; f++)
+    for(f = 0; f < config.confWidth; f++)
         printf("----");
 
     printf("\n");
@@ -139,7 +147,7 @@ int afficher(damier jeu, options config)
     {
         printf("%d |  ", i + 1);
 
-        for(j = 0; j < config.confLength; j++)
+        for(j = 0; j < config.confWidth; j++)
         {
             switch(jeu.table[j][i])
             {
@@ -183,13 +191,20 @@ int afficher(damier jeu, options config)
  *    - 3 : le mouvement n'est pas autorisé par les options
  *    - 4 : la distance entre les deux cases n'est pas égale à 2
  */
-int jouer(damier* jeu, options* config, coordonnees depart, coordonnees arrivee)
+int jouer(damier* jeu, options* config, int* coord)
 {
     const int FUNC_SUCCESS      = 0;
     const int FUNC_DEP_FAULT    = 1;
     const int FUNC_ARR_FAULT    = 2;
     const int FUNC_ILLEGAL_MOVE = 3;
     const int FUNC_BAD_DISTANCE = 4;
+    
+    coordonnees depart, arrivee;
+
+    depart.a = coord[0];
+    depart.o = coord[1];
+    arrivee.a = coord[2];
+    arrivee.o = coord[3];
 
     /* Test case de départ */
     if(jeu->table[depart.a][depart.o] != PION)
@@ -200,11 +215,13 @@ int jouer(damier* jeu, options* config, coordonnees depart, coordonnees arrivee)
         return FUNC_ARR_FAULT;
 
     /* Test mouvement horizontal / vertical autorisé */
-    if(!config->n && (depart.a != arrivee.a || depart.o != arrivee.o))
+    if((config->n == FALSE) && 
+        ((depart.a == arrivee.a) || (depart.o == arrivee.o)))
         return FUNC_ILLEGAL_MOVE;
 
     /* Test mouvement diagonal autorisé */
-    if(!config->d && (depart.a != arrivee.a || depart.o != arrivee.o))
+    if((config->d == FALSE) && 
+        ((depart.a != arrivee.a) && (depart.o != arrivee.o)))
         return FUNC_ILLEGAL_MOVE;
 
     /* Test distance égale à 2 */

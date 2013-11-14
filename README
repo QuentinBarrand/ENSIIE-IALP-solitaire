@@ -36,6 +36,7 @@ http://doc.quentinbarrand.com/ENSIIE/IALP/Projet/
     - option -h : affiche l'usage du programme et le quitte.
 	- option -n : les déplacements horizontaux et verticaux sont permis.
 	- option -d : les déplacements en diagonale sont permis.
+    - option <str> : chemin vers le fichier de configuration.
 
 Les options -n et -d peuvent être utilisées simultanément.
 

@@ -44,9 +44,9 @@ int getOptions(options* config, int argc, char** argv)
 
     int i;
 
-    config->n = 0;
-    config->d = 0;
-    config->confExists = 0;
+    config->n = FALSE;
+    config->d = FALSE;
+    config->confExists = FALSE;
 
     for(i = 1; i < argc; i++)
     {
@@ -74,17 +74,18 @@ int getOptions(options* config, int argc, char** argv)
             /* Il s'agit du chemin vers le fichier de configuration
              * du damier. Il ne doit pas pouvoir être spécifié plusieurs fois.
              */
-            if(config->confExists == 0)
+            if(config->confExists == FALSE)
             {
-                config->confPath = argv[i];
-                config->confExists = 1;
+                config->confPath = malloc(MAX_PATH);
+                strcpy(config->confPath, argv[i]);
+                config->confExists = TRUE;
             }
     }
 
     /* Par défaut on active l'option -n */
-    if(config->n == 0 && config->d == 0)
+    if(config->n == FALSE && config->d == FALSE)
     {
-        config->n = 1;
+        config->n = TRUE;
 
         #ifdef DEBUG
         printf("Utilisation du déplacement vertical et horizontal "
@@ -96,11 +97,20 @@ int getOptions(options* config, int argc, char** argv)
 }
 
 
-/**
+/** Retourne les coordonnées du déplacement calculées depuis la saisie 
+ * alphanumérique de l'utilisateur.
  *
+ * \param userinput saisie de l'utilisateur.
+ * \param coord coordonnées calculées par la fonction et passées par adresse 
+ *    pour récupérer son contenu.
+ * \param config la configuration de l'application.
  *
+ * \return un code de statut :
+ *    - 0 le calcul s'est déroulé correctement.
+ *    - 1 la saisie contient des caractères non standards.
+ *    - 2 la saisie contient des valeurs menant hors du damier.  
  */
-int toCoord(char* userinput, char* coord, options config)
+int toCoord(char* userinput, int* coord, options config)
 {
     const int FUNC_SUCCESS        = 0;
     const int FUNC_INCORRECT_CHAR = 1;
@@ -138,7 +148,7 @@ int toCoord(char* userinput, char* coord, options config)
         }
 
         return FUNC_INCORRECT_CHAR;
-    }
+    }    
 
     #ifdef DEBUG
         for(i = 0; i < 4; i++)
@@ -155,15 +165,19 @@ int toCoord(char* userinput, char* coord, options config)
 }
 
 
-/**
+/** Retourne la valeur d'un caractère numérique.
  *
+ * \param c le caractère dont on souhaite obtenir la valeur entière.
  *
+ * \return un entier :
+ *    - la valeur de l'entier (strictement positive).
+ *    - -1 si le caractère transmis n'est pas un nombre.
  */
 static int getOrdByNumber(char c)
 {
     const int FUNC_NOT_A_NUMBER = -1;
 
-    return (c >= '0' && c <= '9') ? c - '0' : FUNC_NOT_A_NUMBER;
+    return (c >= '0' && c <= '9') ? c - '0' - 1 : FUNC_NOT_A_NUMBER;
 }
 
 
@@ -183,7 +197,7 @@ static int getOrdByTwoNumbers(char c1, char c2)
     int n1 = p1 - '0';
     int n2 = p2 - '0';
 
-    return 10 * p1 + p2;
+    return 10 * n1 + n2;
 }
 
 

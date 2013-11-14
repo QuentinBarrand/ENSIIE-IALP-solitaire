@@ -12,7 +12,8 @@
 /* Fonctions système */
 int printf(const char*, ...);
 size_t strlen(const char*);
-
+void* malloc(size_t);
+char* strcpy(char*, const char*);
 
 /** Options du programme. */
 typedef struct options 
@@ -39,6 +40,7 @@ typedef struct options
 /* Fonctions du module */
 void help(char*);
 int getOptions(options*, int, char**);
-int toCoord(char*, char*, options);
+int toCoord(char*, int*, options);
+void freeAll();
 
 #endif

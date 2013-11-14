@@ -65,8 +65,8 @@ typedef struct coordonnees
 } coordonnees;
 
 /* Fonctions du module */
-int initJeu(options*, damier*);
+int initJeu(options*, damier*, int def);
 int afficher(damier, options);
-int jouer(damier*, options*, coordonnees, coordonnees);
+int jouer(damier*, options*, int*);
 
 #endif
