@@ -3,7 +3,6 @@
  * \brief Fichier principal et point d'entrée de la solution. 
  * 
  * \author Quentin Barrand <quentin.barrand@ensiie.fr>
- * \version 1.1
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -54,7 +53,7 @@ int main(int argc, char** argv)
 
             initJeu(&config, &jeu, TRUE);
             break;
-            
+
         case 3:
             fprintf(stderr, "Le fichier de configuration ne contient aucune "
             "ligne valide.\n");
@@ -65,9 +64,6 @@ int main(int argc, char** argv)
 
     /* Variable interne utilisée pour la saisie. */
     char cont;
-    
-    /* Chaîne saisie par l'utilisateur. */
-    char userinput[100];
 
     int i, read, coord[4];
 
@@ -119,10 +115,10 @@ int main(int argc, char** argv)
                     case 'h':
                         printf("Aide :\n"
                             "AOAO : coordonnées du déplacement\n"
-                            "\tA : abscisse (A - Z)\n"
-                            "\tO : ordonnée (1 - 26)\n"
-                            "p : Annuler le déplacement précédent\n"
-                            "q : Quitter\n");
+                            "\t\tA : abscisse (A - Z)\n"
+                            "\t\tO : ordonnée (1 - 26)\n"
+                            "\tp : Annuler le déplacement précédent\n"
+                            "\tq : Quitter\n");
                         break;
 
                     case 'p':

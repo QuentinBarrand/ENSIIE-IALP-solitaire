@@ -18,10 +18,13 @@ static int getAbsByLetter(char);
  */
 void help(char* executable)
 {
-    printf("Usage : %s [options]"
-        "-h    Affiche l'aide et quitte le programme."
-        "-n    Autorise les coups horizontaux et verticaux (par défaut)."
-        "-d    Autorise les coups en diagonale.\n", executable);
+    printf("Usage : %s [options]\n"
+        "Options :\n"
+        "-h    Affiche l'aide et quitte le programme.\n"
+        "-n    Autorise les coups horizontaux et verticaux (par défaut).\n"
+        "-d    Autorise les coups en diagonale.\n"
+        "<str> Spécifie le chemin vers le fichier de configuration du "
+        "damier.\n", executable);
 }
 
 
@@ -118,7 +121,7 @@ int toCoord(char* userinput, int* coord, options config)
 
     int i, j = 0, current;
 
-    for(i = 0; i < strlen(userinput); i++)
+    for(i = 0; i < (int)strlen(userinput); i++)
     {
         #ifdef DEBUG
         printf("Caractère %c\n", userinput[i]);

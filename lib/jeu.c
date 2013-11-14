@@ -41,11 +41,11 @@ int initJeu(options* config, damier* jeu, int def)
             printf("%s\n", tabString[l]);
         #endif
 
-        refWidth = strlen(tabString[0]);
+        refWidth = (int)strlen(tabString[0]);
 
         /* Vérification de la longueur des lignes du damier lu */
         for(l = 0; l < i; l++)
-            if(strlen(tabString[l]) != refWidth)
+            if((int)strlen(tabString[l]) != refWidth)
                 return FUNC_LINES_NOT_EQUAL;
 
         config->confWidth = refWidth;
