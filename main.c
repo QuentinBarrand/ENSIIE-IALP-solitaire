@@ -54,6 +54,11 @@ int main(int argc, char** argv)
 
             initJeu(&config, &jeu, TRUE);
             break;
+            
+        case 3:
+            fprintf(stderr, "Le fichier de configuration ne contient aucune "
+            "ligne valide.\n");
+            break;
     }
 
     damier historique[H_TAILLE];
@@ -68,7 +73,7 @@ int main(int argc, char** argv)
 
     printf("Bienvenue dans le jeu du Solitaire !");
 
-    for(i = 0; jeu.nb_pion != 1; i++)
+    for(i = 0; jeu.nb_pion > 1; i++)
     {
         historique[i] = jeu;
 
@@ -127,10 +132,9 @@ int main(int argc, char** argv)
                             printf("Retour au tour n°%d\n", i + 1);
                             jeu = historique[i];
                             afficher(jeu, config);
-                            printf("\n\n");
                         }
                         else
-                            printf("Etape n°%d : impossible de charger le "
+                            printf("Tour n°%d : impossible de charger le "
                                 "tour précédent.\n", i + 1);
 
                         break;

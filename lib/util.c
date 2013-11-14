@@ -124,27 +124,38 @@ int toCoord(char* userinput, int* coord, options config)
         printf("Caractère %c\n", userinput[i]);
         #endif
 
-        if((current = getAbsByLetter(userinput[i])) != -1)
+        /* Si on est sur une coordonnée paire (0, 2) */
+        if(j % 2 == 0)
         {
-            coord[j] = current;
-            j++;
-            continue;
+            if((current = getAbsByLetter(userinput[i])) != -1)
+            {
+                coord[j] = current;
+                j++;
+                continue;
+            }
         }
-
-        if((current = 
-            getOrdByTwoNumbers(userinput[i], userinput[i + 1])) != -1)
+        else
         {
-            coord[j] = current;
-            i++;
-            j++;
-            continue;
-        }
+            if((current = 
+                getOrdByTwoNumbers(userinput[i], userinput[i + 1])) != -1)
+            {
+                #ifdef DEBUG
+                printf("Traitement de deux nombre : %c%c ==> %d\n", 
+                    userinput[i], userinput[i + 1], current);
+                #endif
 
-        if((current = getOrdByNumber(userinput[i])) != -1)
-        {
-            coord[j] = current;
-            j++;
-            continue;
+                coord[j] = current;
+                i++;
+                j++;
+                continue;
+            }
+
+            if((current = getOrdByNumber(userinput[i])) != -1)
+            {
+                coord[j] = current;
+                j++;
+                continue;
+            }
         }
 
         return FUNC_INCORRECT_CHAR;
@@ -169,41 +180,41 @@ int toCoord(char* userinput, int* coord, options config)
  *
  * \param c le caractère dont on souhaite obtenir la valeur entière.
  *
- * \return un entier :
- *    - la valeur de l'entier (strictement positive).
- *    - -1 si le caractère transmis n'est pas un nombre.
+ * \return un entier la valeur de l'entier (>= 0) ou -1 en cas d'erreur.
  */
 static int getOrdByNumber(char c)
 {
     const int FUNC_NOT_A_NUMBER = -1;
 
-    return (c >= '0' && c <= '9') ? c - '0' - 1 : FUNC_NOT_A_NUMBER;
+    return (c >= '1' && c <= '9') ? c - '0' - 1 : FUNC_NOT_A_NUMBER;
 }
 
 
-/**
+/** Retourne la valeur d'un nombre constitué de deux chiffres au format char.
  *
+ * \param c1 le premier chiffre du nombre.
+ * \param c2 le deuxième chiffre du nombre.
  *
+ * \return le nombre au format int (>= 0) ou -1 en cas d'erreur.
  */
 static int getOrdByTwoNumbers(char c1, char c2)
 {
     const int FUNC_NOT_A_NUMBER = -1;
 
-    char p1 = getOrdByNumber(c1);
-    char p2 = getOrdByNumber(c2);
+    int p1 = getOrdByNumber(c1) + 1;
+    int p2 = getOrdByNumber(c2) + 1;
 
-    if(p1 == -1 || p2 == -1) return FUNC_NOT_A_NUMBER;
+    if(p1 == 0 || p2 == 0) return FUNC_NOT_A_NUMBER;
 
-    int n1 = p1 - '0';
-    int n2 = p2 - '0';
-
-    return 10 * n1 + n2;
+    return 10 * p1 + p2;
 }
 
 
-/**
+/** Retourne l'index du caractère spécifié dans l'alphabet.
  *
+ * \param c le caractère dont on souhaite obtenir l'index.
  *
+ * \return l'index du caractère (>= 0) ou -1 en cas d'erreur.
  */
 static int getAbsByLetter(char c)
 {

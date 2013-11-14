@@ -43,7 +43,7 @@ int initJeu(options* config, damier* jeu, int def)
 
         refWidth = strlen(tabString[0]);
 
-        /* Vérification de la longueu des lignes du damier lu */
+        /* Vérification de la longueur des lignes du damier lu */
         for(l = 0; l < i; l++)
             if(strlen(tabString[l]) != refWidth)
                 return FUNC_LINES_NOT_EQUAL;
@@ -109,12 +109,12 @@ int initJeu(options* config, damier* jeu, int def)
         for(i = 0; i < T_TAILLE; i++)
             for(j = 0; j < T_TAILLE; j++)
                 jeu->table[j][i] = temp[i][j];
-        
-        jeu->nb_pion = 24;
-    
+            
         config->confWidth = T_TAILLE;
         config->confLength = T_TAILLE;
     }
+
+    jeu->nb_pion = 24;
 
     return FUNC_SUCCESS;
 }
