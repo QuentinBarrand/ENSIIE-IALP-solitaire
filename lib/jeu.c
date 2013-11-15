@@ -15,7 +15,7 @@
  * \return une instance de damier contenant une matrice table initialisée
  *    conformément au sujet.
  */
-int initJeu(options* config, damier* jeu, int def)
+extern int initJeu(options* config, damier* jeu, int def)
 {
     const int FUNC_SUCCESS         = 0;
     const int FUNC_ILLEGAL_CHAR    = 1;
@@ -127,7 +127,7 @@ int initJeu(options* config, damier* jeu, int def)
  *    - 0 l'affichage s'est déroulé correctement.
  *    - 1 le damier contient des valeurs non prévues.
  */
-int afficher(damier jeu, options config)
+extern int afficher(damier jeu, options config)
 {
     int f, i, j, statut = 0;
 
@@ -191,7 +191,7 @@ int afficher(damier jeu, options config)
  *    - 3 : le mouvement n'est pas autorisé par les options
  *    - 4 : la distance entre les deux cases n'est pas égale à 2
  */
-int jouer(damier* jeu, options* config, int* coord)
+extern int jouer(damier* jeu, options* config, int* coord)
 {
     const int FUNC_SUCCESS      = 0;
     const int FUNC_DEP_FAULT    = 1;

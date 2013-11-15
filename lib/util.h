@@ -38,9 +38,9 @@ typedef struct options
 } options;
 
 /* Fonctions du module */
-void help(char*);
-int getOptions(options*, int, char**);
-int toCoord(char*, int*, options);
-void freeAll();
+extern void help(char*);
+extern int getOptions(options*, int, char**);
+extern int toCoord(char*, int*, options);
+extern void freeAll();
 
 #endif

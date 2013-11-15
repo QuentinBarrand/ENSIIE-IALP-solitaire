@@ -16,7 +16,7 @@ static int getAbsByLetter(char);
  *
  * \param executable le nom du programme (correspond à <tt>argv[0]</tt>).
  */
-void help(char* executable)
+extern void help(char* executable)
 {
     printf("Usage : %s [options]\n"
         "Options :\n"
@@ -39,7 +39,7 @@ void help(char* executable)
  *    - 1 : a affiché l'aide
  *    - 2 : une erreur de lecture des paramètres est survenue
  */
-int getOptions(options* config, int argc, char** argv)
+extern int getOptions(options* config, int argc, char** argv)
 {
     const int FUNC_SUCCESS         = 0;
     const int FUNC_PRINTED_HELP    = 1;
@@ -113,7 +113,7 @@ int getOptions(options* config, int argc, char** argv)
  *    - 1 la saisie contient des caractères non standards.
  *    - 2 la saisie contient des valeurs menant hors du damier.  
  */
-int toCoord(char* userinput, int* coord, options config)
+extern int toCoord(char* userinput, int* coord, options config)
 {
     const int FUNC_SUCCESS        = 0;
     const int FUNC_INCORRECT_CHAR = 1;
