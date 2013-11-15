@@ -11,6 +11,9 @@
  *
  * \param config l'instance d'options de l'application.
  * \param jeu l'instance de damier de l'application.
+ * \param def mode de création du damier.
+ *    - 0 : utilisation du damier fourni en paramètre.
+ *    - 1 : utilisation du damier par défaut.
  *
  * \return une instance de damier contenant une matrice table initialisée
  *    conformément au sujet.
@@ -21,13 +24,17 @@ extern int initJeu(options* config, damier* jeu, int def)
     const int FUNC_ILLEGAL_CHAR    = 1;
     const int FUNC_LINES_NOT_EQUAL = 2;
     const int FUNC_TOO_FEW_LINES   = 3;
+    const int FUNC_FILE_NOT_FOUND  = 4;
+
 
     if(config->confExists == TRUE && def == FALSE)
     {
         int i = 0, l, c, refWidth;
         char tabString[MAX_TAILLE][MAX_TAILLE];
 
-        FILE* stream = fopen(config->confPath, "r");
+        FILE* stream;
+
+        if((stream = fopen(config->confPath, "r")) == NULL) return FUNC_FILE_NOT_FOUND;
 
         while(fscanf(stream, "%26s", tabString[i]) != EOF) i++;
 

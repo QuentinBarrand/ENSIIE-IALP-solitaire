@@ -34,10 +34,10 @@ extern void help(char* executable)
  * \param argc le nombre d'arguments depuis la ligne de commande.
  * \param argv la matrice représentant les arguments de la ligne de commande.
  *
- * \return un code de statut: 
- *    - 0 : tous les paramètres ont été lus correctement
- *    - 1 : a affiché l'aide
- *    - 2 : une erreur de lecture des paramètres est survenue
+ * \return un code de statut : 
+ *    - 0 : tous les paramètres ont été lus correctement.
+ *    - 1 : a affiché l'aide.
+ *    - 2 : une erreur de lecture des paramètres est survenue.
  */
 extern int getOptions(options* config, int argc, char** argv)
 {

@@ -24,7 +24,6 @@
 
 
 /* Déclaration des fonctions système utilisées */
-// void* memmove(void*, const void*, size_t);
 int printf(const char*, ...);
 void* malloc(size_t);
 char* strcpy(char*, const char*);

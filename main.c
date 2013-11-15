@@ -58,6 +58,12 @@ int main(int argc, char** argv)
             fprintf(stderr, "Le fichier de configuration ne contient aucune "
             "ligne valide.\n");
             break;
+
+        case 4:
+            fprintf(stderr, "Le fichier de configuration spécifié est "
+            "introuvable.\n");
+            initJeu(&config, &jeu, TRUE);
+            break;
     }
 
     damier historique[H_TAILLE];
