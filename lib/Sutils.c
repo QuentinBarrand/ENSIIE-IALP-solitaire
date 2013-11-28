@@ -4,8 +4,8 @@
  *
  * \author Quentin Barrand <quentin.barrand@ensiie.fr>
  */
-#include "util.h"
-#include "consts.h"
+#include "Sutils.h"
+#include "Sconsts.h"
 
 /* Prototypes statiques */
 static int getOrdByNumber(char);
@@ -16,7 +16,7 @@ static int getAbsByLetter(char);
  *
  * \param executable le nom du programme (correspond à <tt>argv[0]</tt>).
  */
-extern void help(char* executable)
+extern void Sutils_Help(char* executable)
 {
     printf("Usage : %s [options]\n"
         "Options :\n"
@@ -39,7 +39,7 @@ extern void help(char* executable)
  *    - 1 : a affiché l'aide.
  *    - 2 : une erreur de lecture des paramètres est survenue.
  */
-extern int getOptions(options* config, int argc, char** argv)
+extern int Sutils_GetOptions(options* config, int argc, char** argv)
 {
     const int FUNC_SUCCESS         = 0;
     const int FUNC_PRINTED_HELP    = 1;
@@ -58,7 +58,7 @@ extern int getOptions(options* config, int argc, char** argv)
             switch(argv[i][1])
             {
                 case 'h':
-                    help(argv[0]);
+                    Sutils_Help(argv[0]);
                     return FUNC_PRINTED_HELP;
 
                 case 'n':
@@ -113,7 +113,7 @@ extern int getOptions(options* config, int argc, char** argv)
  *    - 1 la saisie contient des caractères non standards.
  *    - 2 la saisie contient des valeurs menant hors du damier.  
  */
-extern int toCoord(char* userinput, int* coord, options config)
+extern int Sutils_ToCoord(char* userinput, int* coord, options config)
 {
     const int FUNC_SUCCESS        = 0;
     const int FUNC_INCORRECT_CHAR = 1;

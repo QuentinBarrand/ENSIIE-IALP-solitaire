@@ -4,8 +4,12 @@
  *
  * \author Quentin Barrand <quentin.barrand@ensiie.fr>
  */
-#include "util.h"
-#include "jeu.h"
+#include "Sutils.h"
+#include "Sjeu.h"
+
+/* Prototypes statiques */
+static int Sjeu_CoupPossible(damier*, options*, coordonnees, coordonnees);
+
 
 /** Initialise une instance de damier et la renvoie au programme principal.
  *
@@ -18,7 +22,7 @@
  * \return une instance de damier contenant une matrice table initialisée
  *    conformément au sujet.
  */
-extern int initJeu(options* config, damier* jeu, int def)
+extern int Sjeu_Initialiser(options* config, damier* jeu, int def)
 {
     const int FUNC_SUCCESS         = 0;
     const int FUNC_ILLEGAL_CHAR    = 1;
@@ -128,13 +132,15 @@ extern int initJeu(options* config, damier* jeu, int def)
 
 
 /** Affiche le damier sur la sortie standard.
+ *
  * \param jeu une instance du type damier.
  * \param config l'instance d'options qui configure l'application.
+ *
  * \return code de statut
  *    - 0 l'affichage s'est déroulé correctement.
  *    - 1 le damier contient des valeurs non prévues.
  */
-extern int afficher(damier jeu, options config)
+extern int Sjeu_Afficher(damier jeu, options config)
 {
     int f, i, j, statut = 0;
 
@@ -188,53 +194,32 @@ extern int afficher(damier jeu, options config)
 
 
 /** Joue un coup.
+ *
  * \param jeu une instance de damier.
  * \param config la configuration de l'application.
  * \param depart les coordonnées de la case de départ.
  * \param arrivee les coordonnées de la case d'arrivée.
+ *
  * \return un code de statut
  *    - 1 : la case de départ n'est pas occupée par un pion
  *    - 2 : la case d'arrivée n'est pas libre
  *    - 3 : le mouvement n'est pas autorisé par les options
  *    - 4 : la distance entre les deux cases n'est pas égale à 2
  */
-extern int jouer(damier* jeu, options* config, int* coord)
-{
-    const int FUNC_SUCCESS      = 0;
-    const int FUNC_DEP_FAULT    = 1;
-    const int FUNC_ARR_FAULT    = 2;
-    const int FUNC_ILLEGAL_MOVE = 3;
-    const int FUNC_BAD_DISTANCE = 4;
-    
+extern int Sjeu_Jouer(damier* jeu, options* config, int* coord)
+{   
+    const int FUNC_SUCCESS = 0; 
+
     coordonnees depart, arrivee;
+    int possible;
 
     depart.a = coord[0];
     depart.o = coord[1];
     arrivee.a = coord[2];
     arrivee.o = coord[3];
 
-    /* Test case de départ */
-    if(jeu->table[depart.a][depart.o] != PION)
-        return FUNC_DEP_FAULT;
-
-    /* Test case d'arrivée */
-    if(jeu->table[arrivee.a][arrivee.o] != LIBRE)
-        return FUNC_ARR_FAULT;
-
-    /* Test mouvement horizontal / vertical autorisé */
-    if((config->n == FALSE) && 
-        ((depart.a == arrivee.a) || (depart.o == arrivee.o)))
-        return FUNC_ILLEGAL_MOVE;
-
-    /* Test mouvement diagonal autorisé */
-    if((config->d == FALSE) && 
-        ((depart.a != arrivee.a) && (depart.o != arrivee.o)))
-        return FUNC_ILLEGAL_MOVE;
-
-    /* Test distance égale à 2 */
-    if((MAX(depart.a, arrivee.a) - MIN(depart.a, arrivee.a) != 2) &&
-       (MAX(depart.o, arrivee.o) - MIN(depart.o, arrivee.o) != 2))
-        return FUNC_BAD_DISTANCE;
+    if ((possible = Sjeu_CoupPossible(jeu, config, depart, arrivee)) != 0)
+        return possible;
 
     coordonnees centrale;
 
@@ -254,6 +239,42 @@ extern int jouer(damier* jeu, options* config, int* coord)
     jeu->table[centrale.a][centrale.o] = LIBRE;
 
     jeu->nb_pion -= 1;
+
+    return FUNC_SUCCESS;
+}
+
+
+static int Sjeu_CoupPossible(damier* jeu, options* config, 
+    coordonnees depart, coordonnees arrivee)
+{
+    const int FUNC_SUCCESS      = 0;
+    const int FUNC_BAD_DEP      = 1;
+    const int FUNC_BAD_ARR      = 2;
+    const int FUNC_ILLEGAL_MOVE = 3;
+    const int FUNC_BAD_DISTANCE = 4;
+
+    /* Test case de départ */
+    if(jeu->table[depart.a][depart.o] != PION)
+        return FUNC_BAD_DEP;
+
+    /* Test case d'arrivée */
+    if(jeu->table[arrivee.a][arrivee.o] != LIBRE)
+        return FUNC_BAD_ARR;
+
+    /* Test mouvement horizontal / vertical autorisé */
+    if((config->n == FALSE) && 
+        ((depart.a == arrivee.a) || (depart.o == arrivee.o)))
+        return FUNC_ILLEGAL_MOVE;
+
+    /* Test mouvement diagonal autorisé */
+    if((config->d == FALSE) && 
+        ((depart.a != arrivee.a) && (depart.o != arrivee.o)))
+        return FUNC_ILLEGAL_MOVE;
+
+    /* Test distance égale à 2 */
+    if((MAX(depart.a, arrivee.a) - MIN(depart.a, arrivee.a) != 2) &&
+       (MAX(depart.o, arrivee.o) - MIN(depart.o, arrivee.o) != 2))
+        return FUNC_BAD_DISTANCE;
 
     return FUNC_SUCCESS;
 }

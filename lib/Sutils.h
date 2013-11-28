@@ -8,12 +8,7 @@
 #define UTIL_H_FILE
 
 #include <stdio.h>
-
-/* Fonctions système */
-int printf(const char*, ...);
-size_t strlen(const char*);
-void* malloc(size_t);
-char* strcpy(char*, const char*);
+#include <string.h>
 
 /** Options du programme. */
 typedef struct options 
@@ -38,9 +33,8 @@ typedef struct options
 } options;
 
 /* Fonctions du module */
-extern void help(char*);
-extern int getOptions(options*, int, char**);
-extern int toCoord(char*, int*, options);
-extern void freeAll();
+extern void Sutils_Help(char*);
+extern int  Sutils_GetOptions(options*, int, char**);
+extern int  Sutils_ToCoord(char*, int*, options);
 
 #endif

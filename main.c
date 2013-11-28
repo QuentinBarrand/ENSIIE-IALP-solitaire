@@ -7,9 +7,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "lib/util.h"
-#include "lib/jeu.h"
-#include "lib/consts.h"
+#include "lib/Sutils.h"
+#include "lib/Sjeu.h"
+#include "lib/Sconsts.h"
 
 /** Fonction main : point d'entrée de l'application. */
 int main(int argc, char** argv) 
@@ -20,7 +20,7 @@ int main(int argc, char** argv)
 
     /* Import des paramètres de la ligne de commande */
     options config;
-    switch(getOptions(&config, argc, argv))
+    switch(Sutils_GetOptions(&config, argc, argv))
     {
         case 1:
             /* Si l'aide a été affichée, le programme se termine 
@@ -30,20 +30,20 @@ int main(int argc, char** argv)
 
         case 2:
             fprintf(stderr, "Paramètres de la ligne de commande incorrects.\n");
-            help(argv[0]);
+            Sutils_Help(argv[0]);
 
             return EXIT_FAILURE;
     }
 
     /* Création du damier */
     damier jeu;
-    switch(initJeu(&config, &jeu, FALSE))
+    switch(Sjeu_Initialiser(&config, &jeu, FALSE))
     {
         case 1:
             fprintf(stderr, "Le fichier de configuration contient des valeurs "
                 "non prévues. Utilisation du damier par défaut.\n");
 
-            initJeu(&config, &jeu, TRUE);
+            Sjeu_Initialiser(&config, &jeu, TRUE);
             break;
 
         case 2:
@@ -51,7 +51,7 @@ int main(int argc, char** argv)
                 "dont la longueur n'est pas identique. Utilisation du damier "
                 "par défaut.\n");
 
-            initJeu(&config, &jeu, TRUE);
+            Sjeu_Initialiser(&config, &jeu, TRUE);
             break;
 
         case 3:
@@ -62,7 +62,7 @@ int main(int argc, char** argv)
         case 4:
             fprintf(stderr, "Le fichier de configuration spécifié est "
             "introuvable.\n");
-            initJeu(&config, &jeu, TRUE);
+            Sjeu_Initialiser(&config, &jeu, TRUE);
             break;
     }
 
@@ -81,7 +81,7 @@ int main(int argc, char** argv)
 
         printf("\n\nTour n°%d - grille de jeu :\n", i + 1);
 
-        if(afficher(jeu, config) != 0)
+        if(Sjeu_Afficher(jeu, config) != 0)
         {
             printf("Le damier contient des valeurs non prévues." 
                    "Sortie du programme.\n" 
@@ -133,7 +133,7 @@ int main(int argc, char** argv)
                             i--;
                             printf("Retour au tour n°%d\n", i + 1);
                             jeu = historique[i];
-                            afficher(jeu, config);
+                            Sjeu_Afficher(jeu, config);
                         }
                         else
                             printf("Tour n°%d : impossible de charger le "
@@ -150,9 +150,7 @@ int main(int argc, char** argv)
             /* Entre 4 et 6 caractères : des coordonnées */
             if(read >= 4 && read <= 6)
             {
-                int result = toCoord(userinput, coord, config);
-
-                switch(result)
+                switch(Sutils_ToCoord(userinput, coord, config))
                 {
                     case 0:
                         break;
@@ -174,7 +172,7 @@ int main(int argc, char** argv)
 
         printf("\n");
 
-        switch(jouer(&jeu, &config, coord))
+        switch(Sjeu_Jouer(&jeu, &config, coord))
         {
             case 1:
                 printf("La case de départ n'est pas occupée par un pion. "

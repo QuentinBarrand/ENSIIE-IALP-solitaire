@@ -8,7 +8,8 @@
 #define JEU_H_FILE
 
 #include <stdio.h>
-#include "consts.h"
+#include <string.h>
+#include "Sconsts.h"
 
 /** Taille des cotés du damier par défaut. */
 #define T_TAILLE 7
@@ -21,13 +22,6 @@
 
 /** Renvoie le minimum de deux valeurs. */
 #define MIN(x, y) (((x) < (y) ? (x) : (y)))
-
-
-/* Déclaration des fonctions système utilisées */
-int printf(const char*, ...);
-void* malloc(size_t);
-char* strcpy(char*, const char*);
-size_t strlen(const char*);
 
 
 /** Représente les trois états possibles d'une case. */
@@ -64,8 +58,8 @@ typedef struct coordonnees
 } coordonnees;
 
 /* Fonctions du module */
-extern int initJeu(options*, damier*, int def);
-extern int afficher(damier, options);
-extern int jouer(damier*, options*, int*);
+extern int Sjeu_Initialiser(options*, damier*, int def);
+extern int Sjeu_Afficher(damier, options);
+extern int Sjeu_Jouer(damier*, options*, int*);
 
 #endif

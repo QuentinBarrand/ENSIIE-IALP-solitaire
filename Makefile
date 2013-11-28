@@ -2,18 +2,19 @@ GCC_OPTS = -O3
 
 .PHONY : doc
 
-all: libsolitaire.a
+all: solitaire
+
+solitaire: lib/libsolitaire.a main.c
 	gcc -o solitaire $(GCC_OPTS) main.c lib/libsolitaire.a
-	make clean-objects
 
-libsolitaire.a: jeu.o util.o
-	cd lib/; ar -cr $@ jeu.o util.o
+lib/libsolitaire.a: lib/Sjeu.o lib/Sutils.o
+	ar -cr $@ lib/Sjeu.o lib/Sutils.o
 
-jeu.o:
-	cd lib/; gcc -c -o $@ $(GCC_OPTS) jeu.c
+lib/Sjeu.o: lib/Sjeu.h lib/Sjeu.c
+	gcc -c -o $@ $(GCC_OPTS) lib/Sjeu.c
 
-util.o:
-	cd lib/; gcc -c -o $@ $(GCC_OPTS) util.c
+lib/Sutils.o: lib/Sutils.h lib/Sutils.c
+	gcc -c -o $@ $(GCC_OPTS) lib/Sutils.c
 
 # You need a Makefile-formatted Makedoc file to call this target
 doc:
@@ -23,8 +24,5 @@ dev:
 	make GCC_OPTS="-Wall -Wextra -DDEBUG -g -O2"
 
 clean:
-	make clean-objects
+	cd lib/; rm -f *.a *.o
 	rm solitaire
-
-clean-objects:
-	cd lib; rm -f *.a *.o
