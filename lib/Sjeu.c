@@ -8,7 +8,8 @@
 #include "Sjeu.h"
 
 /* Prototypes statiques */
-static int Sjeu_CoupPossible(damier*, options*, coordonnees, coordonnees);
+static int Sjeu_CoupPossible(damier*, options*, coordonnees, coordonnees, 
+    coordonnees);
 
 
 /** Initialise une instance de damier et la renvoie au programme principal.
@@ -38,7 +39,8 @@ extern int Sjeu_Initialiser(options* config, damier* jeu, int def)
 
         FILE* stream;
 
-        if((stream = fopen(config->confPath, "r")) == NULL) return FUNC_FILE_NOT_FOUND;
+        if((stream = fopen(config->confPath, "r")) == NULL) 
+            return FUNC_FILE_NOT_FOUND;
 
         while(fscanf(stream, "%26s", tabString[i]) != EOF) i++;
 
@@ -203,25 +205,17 @@ extern int Sjeu_Afficher(damier jeu, options config)
  * \return un code de statut
  *    - 1 : la case de départ n'est pas occupée par un pion
  *    - 2 : la case d'arrivée n'est pas libre
- *    - 3 : le mouvement n'est pas autorisé par les options
- *    - 4 : la distance entre les deux cases n'est pas égale à 2
+ *    - 3 : la case du milieu n'est pas libre
+ *    - 4 : le mouvement n'est pas autorisé par les options
+ *    - 5 : la distance entre les deux cases n'est pas égale à 2
  */
-extern int Sjeu_Jouer(damier* jeu, options* config, int* coord)
+extern int Sjeu_Jouer(damier* jeu, options* config, coordonnees depart,
+    coordonnees arrivee)
 {   
     const int FUNC_SUCCESS = 0; 
 
-    coordonnees depart, arrivee;
-    int possible;
-
-    depart.a = coord[0];
-    depart.o = coord[1];
-    arrivee.a = coord[2];
-    arrivee.o = coord[3];
-
-    if ((possible = Sjeu_CoupPossible(jeu, config, depart, arrivee)) != 0)
-        return possible;
-
     coordonnees centrale;
+    int coup_possible;
 
     if(depart.a == arrivee.a)
         centrale.a = depart.a;
@@ -232,6 +226,10 @@ extern int Sjeu_Jouer(damier* jeu, options* config, int* coord)
         centrale.o = depart.o;
     else
         centrale.o = MAX(depart.o, arrivee.o) - 1;
+
+    if ((coup_possible = 
+        Sjeu_CoupPossible(jeu, config, depart, centrale, arrivee)) != 0)
+        return coup_possible;
 
     /* Modification du damier */
     jeu->table[depart.a][depart.o] = LIBRE;
@@ -244,14 +242,30 @@ extern int Sjeu_Jouer(damier* jeu, options* config, int* coord)
 }
 
 
+/** Vérifie si un coup est jouable.
+ *
+ * \param jeu une instance de damier.
+ * \param config la configuration de l'application.
+ * \param depart les coordonnées de la case de départ.
+ * \param arrivee les coordonnées de la case centrale.
+ * \param arrivee les coordonnées de la case d'arrivée.
+ *
+ * \return un code de statut
+ *    - 1 : la case de départ n'est pas occupée par un pion.
+ *    - 2 : la case d'arrivée n'est pas libre.
+ *    - 3 : la case centrale n'est pas libre.
+ *    - 4 : le mouvement n'est pas autorisé par les options.
+ *    - 5 : la distance entre les deux cases n'est pas égale à 2.
+ */
 static int Sjeu_CoupPossible(damier* jeu, options* config, 
-    coordonnees depart, coordonnees arrivee)
+    coordonnees depart, coordonnees centrale, coordonnees arrivee)
 {
     const int FUNC_SUCCESS      = 0;
     const int FUNC_BAD_DEP      = 1;
     const int FUNC_BAD_ARR      = 2;
-    const int FUNC_ILLEGAL_MOVE = 3;
-    const int FUNC_BAD_DISTANCE = 4;
+    const int FUNC_BAD_MIDDLE   = 3;
+    const int FUNC_ILLEGAL_MOVE = 4;
+    const int FUNC_BAD_DISTANCE = 5;
 
     /* Test case de départ */
     if(jeu->table[depart.a][depart.o] != PION)
@@ -260,6 +274,10 @@ static int Sjeu_CoupPossible(damier* jeu, options* config,
     /* Test case d'arrivée */
     if(jeu->table[arrivee.a][arrivee.o] != LIBRE)
         return FUNC_BAD_ARR;
+
+    /* Test case centrale */
+    if(jeu->table[centrale.a][centrale.o] != PION)
+        return FUNC_BAD_MIDDLE;
 
     /* Test mouvement horizontal / vertical autorisé */
     if((config->n == FALSE) && 
