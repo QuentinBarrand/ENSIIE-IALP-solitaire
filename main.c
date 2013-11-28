@@ -120,7 +120,7 @@ int main(int argc, char** argv)
                 {
                     case 'h':
                         printf("Aide :\n"
-                            "AOAO : coordonnées du déplacement\n"
+                            "\tAOAO : coordonnées du déplacement\n"
                             "\t\tA : abscisse (A - Z)\n"
                             "\t\tO : ordonnée (1 - 26)\n"
                             "\tp : Annuler le déplacement précédent\n"
@@ -172,7 +172,14 @@ int main(int argc, char** argv)
 
         printf("\n");
 
-        switch(Sjeu_Jouer(&jeu, &config, coord))
+        coordonnees depart, arrivee;
+
+        depart.a = coord[0];
+        depart.o = coord[1];
+        arrivee.a = coord[2];
+        arrivee.o = coord[3];
+
+        switch(Sjeu_Jouer(&jeu, &config, depart, arrivee))
         {
             case 1:
                 printf("La case de départ n'est pas occupée par un pion. "
@@ -186,12 +193,18 @@ int main(int argc, char** argv)
                 break;
 
             case 3:
+                printf("La case centrale n'est pas occupée par un pion. "
+                    "Réessayez.\n");
+                i--;
+                break;
+
+            case 4:
                 printf("Ce type de mouvement n'est pas autorisé par les "
                     "options de la ligne de commande. Réessayez.\n");
                 i--;
                 break;
 
-            case 4:
+            case 5:
                 printf("La distance entre les deux cases est incorrecte. "
                     "Réessayez.\n");
                 i--;
