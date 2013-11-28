@@ -1,6 +1,6 @@
 /** 
- * \file jeu.h
- * \brief Header pour le fichier jeu.c.
+ * \file Sjeu.h
+ * \brief Header pour le fichier Sjeu.c.
  *
  * \author Quentin Barrand <quentin.barrand@ensiie.fr>
  */

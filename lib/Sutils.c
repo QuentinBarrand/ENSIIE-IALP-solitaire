@@ -1,5 +1,5 @@
 /** 
- * \file util.c 
+ * \file Sutils.c 
  * \brief Fonctions utilitaires de l'application.
  *
  * \author Quentin Barrand <quentin.barrand@ensiie.fr>

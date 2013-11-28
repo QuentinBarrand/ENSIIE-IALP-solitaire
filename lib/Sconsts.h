@@ -1,5 +1,5 @@
 /**
- * \file consts.h
+ * \file Sconsts.h
  * \brief Quelques définitions de constantes utiles.
  *
  * \author Quentin Barrand <quentin.barrand@ensiie.fr>

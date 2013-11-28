@@ -1,5 +1,5 @@
 /** 
- * \file jeu.c 
+ * \file Sjeu.c 
  * \brief Fonctions relatives à la gestion du jeu.
  *
  * \author Quentin Barrand <quentin.barrand@ensiie.fr>

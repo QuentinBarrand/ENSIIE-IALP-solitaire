@@ -1,6 +1,6 @@
 /**
- * \file util.h
- * \brief Header pour le fichier util.c.
+ * \file Sutils.h
+ * \brief Header pour le fichier Sutils.c.
  *
  * \author Quentin Barrand <quentin.barrand@ensiie.fr>
  */
