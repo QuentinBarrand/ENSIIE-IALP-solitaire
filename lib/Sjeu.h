@@ -57,9 +57,20 @@ typedef struct coordonnees
     int o;
 } coordonnees;
 
+/** Représente un coup. */
+typedef struct coup
+{
+    /** La case de départ du coup. */
+    coordonnees depart;
+
+    /** La case d'arrivée du coup. */
+    coordonnees arrivee;
+} coup;
+
+
 /* Fonctions du module */
 extern int Sjeu_Initialiser(options*, damier*, int def);
 extern int Sjeu_Afficher(damier, options);
-extern int Sjeu_Jouer(damier*, options*, coordonnees, coordonnees);
+extern int Sjeu_Jouer(damier*, options*, coup);
 
 #endif

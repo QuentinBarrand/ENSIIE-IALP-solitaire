@@ -1,4 +1,7 @@
-GCC_OPTS = -O3
+VERSION = 3.0
+BUILD = $(shell date +%s)
+
+GCC_OPTS = -O3 -DVERSION=$(VERSION) -DBUILD=$(BUILD)
 
 .PHONY : doc
 
@@ -21,7 +24,7 @@ doc:
 	make -f Makedoc
 
 dev:
-	make GCC_OPTS="-Wall -Wextra -DDEBUG -g -O2"
+	make GCC_OPTS="-Wall -Wextra -DDEBUG -g -O2 -DVERSION=$(VERSION) -DBUILD=$(BUILD)"
 
 clean:
 	cd lib/; rm -f *.a *.o

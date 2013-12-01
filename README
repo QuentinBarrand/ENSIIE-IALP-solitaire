@@ -10,6 +10,9 @@ Version 2.0
 Quentin Barrand <quentin.barrand@ensiie.fr>
 
 ## CHANGELOG ##
+### 2.0.1 ###
+* Corrections de bugs de la version 2.0.
+
 ### 2.0 ###
 * Ajout du fichier de configuration du jeu.
 * Amélioration de l'ergonomie.

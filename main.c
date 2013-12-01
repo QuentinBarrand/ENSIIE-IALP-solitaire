@@ -18,6 +18,14 @@ int main(int argc, char** argv)
     printf("Mode DEBUG activé\n");
     #endif
 
+    #ifdef VERSION
+    printf("Version : %d\n", VERSION);
+    #endif
+
+    #ifdef BUILD
+    printf("Build date : %d\n", BUILD);
+    #endif
+
     /* Import des paramètres de la ligne de commande */
     options config;
     switch(Sutils_GetOptions(&config, argc, argv))
@@ -172,14 +180,14 @@ int main(int argc, char** argv)
 
         printf("\n");
 
-        coordonnees depart, arrivee;
+        coup current_coup;
 
-        depart.a = coord[0];
-        depart.o = coord[1];
-        arrivee.a = coord[2];
-        arrivee.o = coord[3];
+        current_coup.depart.a = coord[0];
+        current_coup.depart.o = coord[1];
+        current_coup.arrivee.a = coord[2];
+        current_coup.arrivee.o = coord[3];
 
-        switch(Sjeu_Jouer(&jeu, &config, depart, arrivee))
+        switch(Sjeu_Jouer(&jeu, &config, current_coup))
         {
             case 1:
                 printf("La case de départ n'est pas occupée par un pion. "

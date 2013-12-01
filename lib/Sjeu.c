@@ -8,8 +8,7 @@
 #include "Sjeu.h"
 
 /* Prototypes statiques */
-static int Sjeu_CoupPossible(damier*, options*, coordonnees, coordonnees, 
-    coordonnees);
+static int Sjeu_CoupPossible(damier*, options*, coup, coordonnees);
 
 
 /** Initialise une instance de damier et la renvoie au programme principal.
@@ -209,31 +208,30 @@ extern int Sjeu_Afficher(damier jeu, options config)
  *    - 4 : le mouvement n'est pas autorisé par les options
  *    - 5 : la distance entre les deux cases n'est pas égale à 2
  */
-extern int Sjeu_Jouer(damier* jeu, options* config, coordonnees depart,
-    coordonnees arrivee)
+extern int Sjeu_Jouer(damier* jeu, options* config, coup current_coup)
 {   
     const int FUNC_SUCCESS = 0; 
 
     coordonnees centrale;
     int coup_possible;
 
-    if(depart.a == arrivee.a)
-        centrale.a = depart.a;
+    if(current_coup.depart.a == current_coup.arrivee.a)
+        centrale.a = current_coup.depart.a;
     else 
-        centrale.a = MAX(depart.a, arrivee.a) - 1;
+        centrale.a = MAX(current_coup.depart.a, current_coup.arrivee.a) - 1;
 
-    if(depart.o == arrivee.o)
-        centrale.o = depart.o;
+    if(current_coup.depart.o == current_coup.arrivee.o)
+        centrale.o = current_coup.depart.o;
     else
-        centrale.o = MAX(depart.o, arrivee.o) - 1;
+        centrale.o = MAX(current_coup.depart.o, current_coup.arrivee.o) - 1;
 
-    if ((coup_possible = 
-        Sjeu_CoupPossible(jeu, config, depart, centrale, arrivee)) != 0)
+    if ((coup_possible = Sjeu_CoupPossible(jeu, config, current_coup, 
+        centrale)) != 0)
         return coup_possible;
 
     /* Modification du damier */
-    jeu->table[depart.a][depart.o] = LIBRE;
-    jeu->table[arrivee.a][arrivee.o] = PION;
+    jeu->table[current_coup.depart.a][current_coup.depart.o] = LIBRE;
+    jeu->table[current_coup.arrivee.a][current_coup.arrivee.o] = PION;
     jeu->table[centrale.a][centrale.o] = LIBRE;
 
     jeu->nb_pion -= 1;
@@ -257,8 +255,8 @@ extern int Sjeu_Jouer(damier* jeu, options* config, coordonnees depart,
  *    - 4 : le mouvement n'est pas autorisé par les options.
  *    - 5 : la distance entre les deux cases n'est pas égale à 2.
  */
-static int Sjeu_CoupPossible(damier* jeu, options* config, 
-    coordonnees depart, coordonnees centrale, coordonnees arrivee)
+static int Sjeu_CoupPossible(damier* jeu, options* config, coup current_coup, 
+    coordonnees centrale)
 {
     const int FUNC_SUCCESS      = 0;
     const int FUNC_BAD_DEP      = 1;
@@ -268,11 +266,11 @@ static int Sjeu_CoupPossible(damier* jeu, options* config,
     const int FUNC_BAD_DISTANCE = 5;
 
     /* Test case de départ */
-    if(jeu->table[depart.a][depart.o] != PION)
+    if(jeu->table[current_coup.depart.a][current_coup.depart.o] != PION)
         return FUNC_BAD_DEP;
 
     /* Test case d'arrivée */
-    if(jeu->table[arrivee.a][arrivee.o] != LIBRE)
+    if(jeu->table[current_coup.arrivee.a][current_coup.arrivee.o] != LIBRE)
         return FUNC_BAD_ARR;
 
     /* Test case centrale */
@@ -281,17 +279,21 @@ static int Sjeu_CoupPossible(damier* jeu, options* config,
 
     /* Test mouvement horizontal / vertical autorisé */
     if((config->n == FALSE) && 
-        ((depart.a == arrivee.a) || (depart.o == arrivee.o)))
+        ((current_coup.depart.a == current_coup.arrivee.a) || 
+        (current_coup.depart.o == current_coup.arrivee.o)))
         return FUNC_ILLEGAL_MOVE;
 
     /* Test mouvement diagonal autorisé */
     if((config->d == FALSE) && 
-        ((depart.a != arrivee.a) && (depart.o != arrivee.o)))
+        ((current_coup.depart.a != current_coup.arrivee.a) && 
+        (current_coup.depart.o != current_coup.arrivee.o)))
         return FUNC_ILLEGAL_MOVE;
 
     /* Test distance égale à 2 */
-    if((MAX(depart.a, arrivee.a) - MIN(depart.a, arrivee.a) != 2) &&
-       (MAX(depart.o, arrivee.o) - MIN(depart.o, arrivee.o) != 2))
+    if((MAX(current_coup.depart.a, current_coup.arrivee.a) - 
+        MIN(current_coup.depart.a, current_coup.arrivee.a) != 2) &&
+       (MAX(current_coup.depart.o, current_coup.arrivee.o) - 
+        MIN(current_coup.depart.o, current_coup.arrivee.o) != 2))
         return FUNC_BAD_DISTANCE;
 
     return FUNC_SUCCESS;
