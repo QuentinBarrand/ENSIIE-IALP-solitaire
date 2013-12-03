@@ -237,6 +237,10 @@ extern int Sjeu_Jouer(damier* jeu, options* config, coup current_coup)
         centrale)) != 0)
         return coup_possible;
 
+    if ((coup_possible = 
+        Sjeu_CoupPossible(jeu, config, current_coup, centrale)) != 0)
+        return coup_possible;
+
     /* Modification du damier */
     jeu->table[current_coup.depart.a][current_coup.depart.o] = LIBRE;
     jeu->table[current_coup.arrivee.a][current_coup.arrivee.o] = PION;
