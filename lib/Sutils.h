@@ -4,8 +4,8 @@
  *
  * \author Quentin Barrand <quentin.barrand@ensiie.fr>
  */
-#ifndef UTIL_H_FILE
-#define UTIL_H_FILE
+#ifndef SUTILS_H_FILE
+#define SUTILS_H_FILE
 
 #include <stdio.h>
 #include <string.h>
@@ -35,6 +35,6 @@ typedef struct options
 /* Fonctions du module */
 extern void Sutils_Help(char*);
 extern int  Sutils_GetOptions(options*, int, char**);
-extern int  Sutils_ToCoord(char*, int*, options);
+extern int  Sutils_ToCoord(char*, int*, int, int);
 
 #endif

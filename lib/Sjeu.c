@@ -4,8 +4,11 @@
  *
  * \author Quentin Barrand <quentin.barrand@ensiie.fr>
  */
-#include "Sutils.h"
+#include <stdio.h>
+#include <string.h>
+ 
 #include "Sjeu.h"
+#include "Sconsts.h"
 
 /* Prototypes statiques */
 static int Sjeu_CoupPossible(damier*, options*, coup, coordonnees);
@@ -63,15 +66,18 @@ extern int Sjeu_Initialiser(options* config, damier* jeu, int def)
         config->confWidth = refWidth;
         config->confLength = i;
 
+        jeu->width = refWidth;
+        jeu->length = i;
+
         /* Allocation de jeu->table */
-        jeu->table = malloc(config->confWidth * sizeof(cases*));
+        jeu->table = malloc(jeu->width * sizeof(cases*));
 
-        for(l = 0; l < config->confWidth; l++)
-            jeu->table[l] = malloc(config->confLength * sizeof(cases));
+        for(l = 0; l < jeu->width; l++)
+            jeu->table[l] = malloc(jeu->length * sizeof(cases));
 
-        for(l = 0; l < config->confLength; l++)
+        for(l = 0; l < jeu->length; l++)
         {
-            for(c = 0; c < config->confWidth; c++) // ;-)
+            for(c = 0; c < jeu->width; c++) // ;-)
             {
                 switch(tabString[l][c]) 
                 {
@@ -124,6 +130,8 @@ extern int Sjeu_Initialiser(options* config, damier* jeu, int def)
             
         config->confWidth = T_TAILLE;
         config->confLength = T_TAILLE;
+        jeu->width = T_TAILLE;
+        jeu->length = T_TAILLE;
     }
 
     jeu->nb_pion = 24;
@@ -141,27 +149,27 @@ extern int Sjeu_Initialiser(options* config, damier* jeu, int def)
  *    - 0 l'affichage s'est déroulé correctement.
  *    - 1 le damier contient des valeurs non prévues.
  */
-extern int Sjeu_Afficher(damier jeu, options config)
+extern int Sjeu_Afficher(damier jeu)
 {
     int f, i, j, statut = 0;
 
     printf("\n      ");
 
-    for(f = 0; f < config.confWidth; f++)
+    for(f = 0; f < jeu.width; f++)
         printf("%c   ", 'A' + f);
 
     printf("\n   -");
 
-    for(f = 0; f < config.confWidth; f++)
+    for(f = 0; f < jeu.width; f++)
         printf("----");
 
     printf("\n");
 
-    for(i = 0; i < config.confLength; i++)
+    for(i = 0; i < jeu.length; i++)
     {
         printf("%d |  ", i + 1);
 
-        for(j = 0; j < config.confWidth; j++)
+        for(j = 0; j < jeu.width; j++)
         {
             switch(jeu.table[j][i])
             {

@@ -113,7 +113,7 @@ extern int Sutils_GetOptions(options* config, int argc, char** argv)
  *    - 1 la saisie contient des caractères non standards.
  *    - 2 la saisie contient des valeurs menant hors du damier.  
  */
-extern int Sutils_ToCoord(char* userinput, int* coord, options config)
+extern int Sutils_ToCoord(char* userinput, int* coord, int width, int length)
 {
     const int FUNC_SUCCESS        = 0;
     const int FUNC_INCORRECT_CHAR = 1;
@@ -169,10 +169,10 @@ extern int Sutils_ToCoord(char* userinput, int* coord, options config)
             printf("Nombre %d\n", coord[i]);
     #endif
 
-    if(coord[0] + 1 > config.confWidth ||
-        coord[1] + 1 > config.confLength ||
-        coord[2] + 1 > config.confWidth ||
-        coord[3] + 1 > config.confLength)
+    if(coord[0] + 1 > width ||
+        coord[1] + 1 > length ||
+        coord[2] + 1 > width ||
+        coord[3] + 1 > length)
         return FUNC_OUT_OF_BOUNDS;
 
     return FUNC_SUCCESS;

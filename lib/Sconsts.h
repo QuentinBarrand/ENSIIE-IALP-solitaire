@@ -5,8 +5,8 @@
  * \author Quentin Barrand <quentin.barrand@ensiie.fr>
  */ 
 
-#ifndef CONSTS_H_FILE
-#define CONSTS_H_FILE
+#ifndef SCONSTS_H_FILE
+#define SCONSTS_H_FILE
 
 /** Le nombre d'instantanés du damier à conserver (taille de l'historique). */
 #define H_TAILLE 100

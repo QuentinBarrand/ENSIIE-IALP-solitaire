@@ -4,12 +4,10 @@
  *
  * \author Quentin Barrand <quentin.barrand@ensiie.fr>
  */
-#ifndef JEU_H_FILE
-#define JEU_H_FILE
+#ifndef SJEU_H_FILE
+#define SJEU_H_FILE
 
-#include <stdio.h>
-#include <string.h>
-#include "Sconsts.h"
+#include "Sutils.h"
 
 /** Taille des cotés du damier par défaut. */
 #define T_TAILLE 7
@@ -45,6 +43,12 @@ typedef struct damier
     
    	/** Le nombre de pions encore présents sur le damier. */
     int nb_pion;
+
+    /** Nombre de colonnes dans le fichier de configuration */
+    int width;
+
+    /** Nombre de lignes dans le fichier de configuration du damier. */
+    int length;
 } damier;
 
 /** Représente les coordonnées d'une case */
@@ -70,7 +74,7 @@ typedef struct coup
 
 /* Fonctions du module */
 extern int Sjeu_Initialiser(options*, damier*, int def);
-extern int Sjeu_Afficher(damier, options);
+extern int Sjeu_Afficher(damier);
 extern int Sjeu_Jouer(damier*, options*, coup);
 
 #endif

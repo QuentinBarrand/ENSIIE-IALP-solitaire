@@ -8,16 +8,19 @@ GCC_OPTS = -O3 -DVERSION=$(VERSION) -DBUILD=$(BUILD)
 all: solitaire
 
 solitaire: lib/libsolitaire.a main.c
-	gcc -o solitaire $(GCC_OPTS) main.c lib/libsolitaire.a
+	gcc -o solitaire $(GCC_OPTS) main.c lib/libsolitaire.a -lcurses
 
-lib/libsolitaire.a: lib/Sjeu.o lib/Sutils.o
-	ar -cr $@ lib/Sjeu.o lib/Sutils.o
+lib/libsolitaire.a: lib/Sjeu.o lib/Sutils.o lib/Sgui.o
+	ar -cr $@ lib/Sjeu.o lib/Sutils.o lib/Sgui.o
 
 lib/Sjeu.o: lib/Sjeu.h lib/Sjeu.c
 	gcc -c -o $@ $(GCC_OPTS) lib/Sjeu.c
 
 lib/Sutils.o: lib/Sutils.h lib/Sutils.c
 	gcc -c -o $@ $(GCC_OPTS) lib/Sutils.c
+
+lib/Sgui.o: lib/Sgui.c lib/Sgui.c
+	gcc -c -o $@ $(GCC_OPTS) lib/Sgui.c
 
 # You need a Makefile-formatted Makedoc file to call this target
 doc:

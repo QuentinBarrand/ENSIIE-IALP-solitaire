@@ -4,28 +4,18 @@
  * 
  * \author Quentin Barrand <quentin.barrand@ensiie.fr>
  */
+
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "lib/Sutils.h"
 #include "lib/Sjeu.h"
+#include "lib/Sgui.h"
 #include "lib/Sconsts.h"
 
 /** Fonction main : point d'entrée de l'application. */
 int main(int argc, char** argv) 
 {
-    #ifdef DEBUG
-    printf("Mode DEBUG activé\n");
-    #endif
-
-    #ifdef VERSION
-    printf("Version : %d\n", VERSION);
-    #endif
-
-    #ifdef BUILD
-    printf("Build date : %d\n", BUILD);
-    #endif
-
     /* Import des paramètres de la ligne de commande */
     options config;
     switch(Sutils_GetOptions(&config, argc, argv))
@@ -74,6 +64,9 @@ int main(int argc, char** argv)
             break;
     }
 
+    Sgui_Show(jeu);
+
+
     damier historique[H_TAILLE];
 
     /* Variable interne utilisée pour la saisie. */
@@ -89,7 +82,7 @@ int main(int argc, char** argv)
 
         printf("\n\nTour n°%d - grille de jeu :\n", i + 1);
 
-        if(Sjeu_Afficher(jeu, config) != 0)
+        if(Sjeu_Afficher(jeu) != 0)
         {
             printf("Le damier contient des valeurs non prévues." 
                    "Sortie du programme.\n" 
@@ -141,7 +134,7 @@ int main(int argc, char** argv)
                             i--;
                             printf("Retour au tour n°%d\n", i + 1);
                             jeu = historique[i];
-                            Sjeu_Afficher(jeu, config);
+                            Sjeu_Afficher(jeu);
                         }
                         else
                             printf("Tour n°%d : impossible de charger le "
@@ -158,7 +151,7 @@ int main(int argc, char** argv)
             /* Entre 4 et 6 caractères : des coordonnées */
             if(read >= 4 && read <= 6)
             {
-                switch(Sutils_ToCoord(userinput, coord, config))
+                switch(Sutils_ToCoord(userinput, coord, jeu.width, jeu.length))
                 {
                     case 0:
                         break;
