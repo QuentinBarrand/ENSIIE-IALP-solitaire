@@ -7,19 +7,6 @@
 #ifndef SJEU_H_FILE
 #define SJEU_H_FILE
 
-/** Taille des cotés du damier par défaut. */
-#define T_TAILLE 7
-
-/** Taille maximum d'un côté du damier. */
-#define MAX_TAILLE 26
-
-/** Renvoie le maximum de deux valeurs/ */
-#define MAX(x, y) (((x) > (y) ? (x) : (y)))
-
-/** Renvoie le minimum de deux valeurs. */
-#define MIN(x, y) (((x) < (y) ? (x) : (y)))
-
-
 /** Options du programme. */
 typedef struct options 
 {

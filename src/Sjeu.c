@@ -12,6 +12,19 @@
 #include "Sconsts.h"
 #include "Sgui.h"
 #include "Sjeu.h"
+#include "Stack.h"
+
+/** Taille des cotés du damier par défaut. */
+#define T_TAILLE 7
+
+/** Taille maximum d'un côté du damier. */
+#define MAX_TAILLE 26
+
+/** Renvoie le maximum de deux valeurs/ */
+#define MAX(x, y) (((x) > (y) ? (x) : (y)))
+
+/** Renvoie le minimum de deux valeurs. */
+#define MIN(x, y) (((x) < (y) ? (x) : (y)))
 
 
 /* Prototypes statiques */
@@ -158,11 +171,23 @@ extern int Sjeu_New(options* config)
 
     char userinput[MAX_INPUT];
     int coord[4];
+    coup current_coup;
 
     mvprintw(LINES - 2, 0, "Saisissez un coup (? pour l'aide) : ");
-    Sgui_ReadCoup(userinput);
 
-    Scoordutils_ToIntCoord(userinput, coord, jeu.width, jeu.length);
+    while(TRUE)
+    {
+        Sgui_ReadCoup(userinput);
+    
+        Scoordutils_ToIntCoord(userinput, coord, jeu.width, jeu.length);
+        
+        current_coup.depart.a  = coord[0];
+        current_coup.depart.o  = coord[1];
+        current_coup.arrivee.a = coord[2];
+        current_coup.arrivee.o = coord[3];
+
+        Sjeu_Jouer(&jeu, &config, current_coup);
+    }
 
     refresh();
     getch();
@@ -379,20 +404,13 @@ static int Sjeu_Initialiser(options* config, damier* jeu, int def)
 
         fclose(stream);
 
-        #ifdef DEBUG
-        printf("Fichier lu (%d lignes) : \n", i);
-        for(l = 0; l < i; l++)
-            printf("%s\n", tabString[l]);
-        #endif
-
-        refWidth = (int)strlen(tabString[0]);
+        jeu->width = (int)strlen(tabString[0]);
 
         /* Vérification de la longueur des lignes du damier lu */
         for(l = 0; l < i; l++)
-            if((int)strlen(tabString[l]) != refWidth)
+            if((int)strlen(tabString[l]) != jeu->width)
                 return FUNC_LINES_NOT_EQUAL;
 
-        jeu->width = refWidth;
         jeu->length = i;
 
         /* Allocation de jeu->table */
@@ -429,10 +447,6 @@ static int Sjeu_Initialiser(options* config, damier* jeu, int def)
     }
     else
     {
-        #ifdef DEBUG
-        printf("Utilisation du damier par défaut.\n");
-        #endif
-
         cases temp[T_TAILLE][T_TAILLE] = { 
             {VIDE, VIDE, VIDE, PION,  VIDE, VIDE, VIDE},
             {VIDE, PION, PION, PION,  PION, PION, VIDE},
