@@ -4,100 +4,20 @@
  *
  * \author Quentin Barrand <quentin.barrand@ensiie.fr>
  */
-#include "Sutils.h"
-#include "Sconsts.h"
+
+#include <stdio.h>
+#include <string.h>
+
+#include "Scoordutils.h"
 
 /* Prototypes statiques */
 static int getOrdByNumber(char);
 static int getOrdByTwoNumbers(char, char);
 static int getAbsByLetter(char);
 
-/** Affiche l'usage du programme.
- *
- * \param executable le nom du programme (correspond à <tt>argv[0]</tt>).
+/* 
+ * Fonctions externes
  */
-extern void Sutils_Help(char* executable)
-{
-    printf("Usage : %s [options]\n"
-        "Options :\n"
-        "-h    Affiche l'aide et quitte le programme.\n"
-        "-n    Autorise les coups horizontaux et verticaux (par défaut).\n"
-        "-d    Autorise les coups en diagonale.\n"
-        "<str> Spécifie le chemin vers le fichier de configuration du "
-        "damier.\n", executable);
-}
-
-
-/** Récupère les options de la ligne de commande
- *
- * \param config la configuration actuelle de l'application.
- * \param argc le nombre d'arguments depuis la ligne de commande.
- * \param argv la matrice représentant les arguments de la ligne de commande.
- *
- * \return un code de statut : 
- *    - 0 : tous les paramètres ont été lus correctement.
- *    - 1 : a affiché l'aide.
- *    - 2 : une erreur de lecture des paramètres est survenue.
- */
-extern int Sutils_GetOptions(options* config, int argc, char** argv)
-{
-    const int FUNC_SUCCESS         = 0;
-    const int FUNC_PRINTED_HELP    = 1;
-    const int FUNC_INCORRECT_PARAM = 2;
-
-    int i;
-
-    config->n = FALSE;
-    config->d = FALSE;
-    config->confExists = FALSE;
-
-    for(i = 1; i < argc; i++)
-    {
-        if(argv[i][0] == '-')
-        {
-            switch(argv[i][1])
-            {
-                case 'h':
-                    Sutils_Help(argv[0]);
-                    return FUNC_PRINTED_HELP;
-
-                case 'n':
-                    config->n = 1;
-                    continue;
-
-                case 'd':
-                    config->d = 1;
-                    continue;
-
-                default:
-                    return FUNC_INCORRECT_PARAM;
-            }
-        }
-        else
-            /* Il s'agit du chemin vers le fichier de configuration
-             * du damier. Il ne doit pas pouvoir être spécifié plusieurs fois.
-             */
-            if(config->confExists == FALSE)
-            {
-                config->confPath = malloc(MAX_PATH);
-                strcpy(config->confPath, argv[i]);
-                config->confExists = TRUE;
-            }
-    }
-
-    /* Par défaut on active l'option -n */
-    if(config->n == FALSE && config->d == FALSE)
-    {
-        config->n = TRUE;
-
-        #ifdef DEBUG
-        printf("Utilisation du déplacement vertical et horizontal "
-            "par défaut.\n");
-        #endif
-    }
-
-    return FUNC_SUCCESS;
-}
 
 
 /** Retourne les coordonnées du déplacement calculées depuis la saisie 
@@ -113,7 +33,7 @@ extern int Sutils_GetOptions(options* config, int argc, char** argv)
  *    - 1 la saisie contient des caractères non standards.
  *    - 2 la saisie contient des valeurs menant hors du damier.  
  */
-extern int Sutils_ToCoord(char* userinput, int* coord, int width, int length)
+extern int Scoordutils_ToIntCoord(char* userinput, int* coord, int width, int length)
 {
     const int FUNC_SUCCESS        = 0;
     const int FUNC_INCORRECT_CHAR = 1;
@@ -123,10 +43,6 @@ extern int Sutils_ToCoord(char* userinput, int* coord, int width, int length)
 
     for(i = 0; i < (int)strlen(userinput); i++)
     {
-        #ifdef DEBUG
-        printf("Caractère %c\n", userinput[i]);
-        #endif
-
         /* Si on est sur une coordonnée paire (0, 2) */
         if(j % 2 == 0)
         {
@@ -142,11 +58,6 @@ extern int Sutils_ToCoord(char* userinput, int* coord, int width, int length)
             if((current = 
                 getOrdByTwoNumbers(userinput[i], userinput[i + 1])) != -1)
             {
-                #ifdef DEBUG
-                printf("Traitement de deux nombre : %c%c ==> %d\n", 
-                    userinput[i], userinput[i + 1], current);
-                #endif
-
                 coord[j] = current;
                 i++;
                 j++;
@@ -162,12 +73,7 @@ extern int Sutils_ToCoord(char* userinput, int* coord, int width, int length)
         }
 
         return FUNC_INCORRECT_CHAR;
-    }    
-
-    #ifdef DEBUG
-        for(i = 0; i < 4; i++)
-            printf("Nombre %d\n", coord[i]);
-    #endif
+    }
 
     if(coord[0] + 1 > width ||
         coord[1] + 1 > length ||
@@ -177,6 +83,11 @@ extern int Sutils_ToCoord(char* userinput, int* coord, int width, int length)
 
     return FUNC_SUCCESS;
 }
+
+
+/* 
+ * Fonctions statiques
+ */
 
 
 /** Retourne la valeur d'un caractère numérique.
@@ -228,5 +139,3 @@ static int getAbsByLetter(char c)
 
     return FUNC_NOT_A_LETTER;
 }
-
-

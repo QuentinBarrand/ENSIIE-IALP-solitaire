@@ -7,8 +7,6 @@
 #ifndef SJEU_H_FILE
 #define SJEU_H_FILE
 
-#include "Sutils.h"
-
 /** Taille des cotés du damier par défaut. */
 #define T_TAILLE 7
 
@@ -21,6 +19,22 @@
 /** Renvoie le minimum de deux valeurs. */
 #define MIN(x, y) (((x) < (y) ? (x) : (y)))
 
+
+/** Options du programme. */
+typedef struct options 
+{
+    /** Déplacements horizontaux et verticaux. */
+    int n;
+
+    /** Déplacements en diagonale/ */
+    int d;
+
+    /** Présence d'un fichier de configuration. */
+    int confExists;
+
+    /** Chemin vers le fichier de configuration du damier */
+    char* confPath;
+} options;
 
 /** Représente les trois états possibles d'une case. */
 typedef enum cases 
@@ -73,8 +87,8 @@ typedef struct coup
 
 
 /* Fonctions du module */
-extern int Sjeu_Initialiser(options*, damier*, int def);
-extern int Sjeu_Afficher(damier);
-extern int Sjeu_Jouer(damier*, options*, coup);
+extern void Sjeu_Aide(char*);
+extern int  Sjeu_LoadOptions(options*, int, char**);
+extern int  Sjeu_New(options*);
 
 #endif

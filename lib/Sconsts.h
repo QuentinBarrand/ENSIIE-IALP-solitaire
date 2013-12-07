@@ -20,9 +20,6 @@
 /** Constante pratique. */
 #define TRUE    1
 
-/** Taille maximale du champ de saisie de l'utilisateur. */
-#define MAX_INPUT   100
-
 /** Taille maximale du chemin vers le fichier de configuration. */
 #define MAX_PATH    256
 
