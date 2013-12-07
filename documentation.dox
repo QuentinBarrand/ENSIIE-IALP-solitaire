@@ -1,6 +1,6 @@
 /**
  * \mainpage Solitaire
- * This software was made for a school project, and thus its documentation is redacted in French.
+ * This software was made for a school project, and thus its documentation is redacted in French, except for the stack module which is in english (because it is portable and can be reused).
  * Check its <a href="README.html">README</a> or go to <a href="files.html">Fichiers</a> to get a full description of its components.
  * 
  * Source code can be downloaded from <a href="http://git.quentinbarrand.com/?p=ENSIIE/IALP/project.git">the project's Git repository</a> (or <a href="https://github.com/QuentinBarrand/ENSIIE-IALP-solitaire">Github</a> as a mirror).

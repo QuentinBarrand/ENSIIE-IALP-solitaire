@@ -10,8 +10,8 @@ all: solitaire
 solitaire: lib/libsolitaire.a main.c
 	gcc -o solitaire $(GCC_OPTS) $(VERSION) $(BUILD) main.c lib/libsolitaire.a -lcurses
 
-lib/libsolitaire.a: lib/Sjeu.o lib/Scoordutils.o lib/Sgui.o lib/stack.o
-	ar -cr $@ lib/Sjeu.o lib/Scoordutils.o lib/Sgui.o lib/stack.o
+lib/libsolitaire.a: lib/Sjeu.o lib/Scoordutils.o lib/Sgui.o lib/Stack.o
+	ar -cr $@ lib/Sjeu.o lib/Scoordutils.o lib/Sgui.o lib/Stack.o
 
 lib/Scoordutils.o: lib/Scoordutils.h lib/Scoordutils.c
 	gcc -c -o $@ $(GCC_OPTS) $(VERSION) $(BUILD) lib/Scoordutils.c
@@ -21,6 +21,9 @@ lib/Sgui.o: lib/Sgui.c lib/Sgui.c
 
 lib/Sjeu.o: lib/Sjeu.h lib/Sjeu.c
 	gcc -c -o $@ $(GCC_OPTS) $(VERSION) $(BUILD) lib/Sjeu.c
+
+lib/Stack.o: lib/Stack.c lib/Stack.h
+	gcc -c -o $@ $(GCC_OPTS) $(VERSION) $(BUILD) lib/Stack.c
 
 # You need a Makefile-formatted Makedoc file to call this target
 doc:

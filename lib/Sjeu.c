@@ -109,8 +109,8 @@ extern int Sjeu_LoadOptions(options* config, int argc, char** argv)
 
 /** Point d'entrée du module de jeu. Créé un nouveau jeu.
  *
- * \param config l'instance d'options de l'application/
- *
+ * \param config l'instance d'options de l'application
+ *.
  * \return le code de retour à retourner au processus père.
  */
 extern int Sjeu_New(options* config)
@@ -154,9 +154,6 @@ extern int Sjeu_New(options* config)
             break;
     }
 
-    getch();
-    clear();
-
     Sjeu_Afficher(app_window, &jeu, 0);
 
     char userinput[MAX_INPUT];
@@ -166,13 +163,6 @@ extern int Sjeu_New(options* config)
     Sgui_ReadCoup(userinput);
 
     Scoordutils_ToIntCoord(userinput, coord, jeu.width, jeu.length);
-
-    #ifdef DEBUG
-    int i;
-
-    for(i=0; i < 4; i++)
-        printw("%d", coord[i]);
-    #endif
 
     refresh();
     getch();

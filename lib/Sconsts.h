@@ -8,9 +8,6 @@
 #ifndef SCONSTS_H_FILE
 #define SCONSTS_H_FILE
 
-/** Le nombre d'instantanés du damier à conserver (taille de l'historique). */
-#define H_TAILLE 100
-
 /** Le nom et les coordonnées du développeur. */
 #define AUTEUR "Quentin Barrand <quentin.barrand@ensiie.fr>"
 
