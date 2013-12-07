@@ -1,10 +1,17 @@
+/**
+ * \file Stack.h
+ * \brief Header pour le fichier Stack.c.
+ *
+ * \author Quentin Barrand <quentin.barrand@ensiie.fr>
+ */
+
 #ifndef STACK_H_FILE
 #define STACK_H_FILE
  
 typedef struct Stack {
-  int count;
-  int max;
-  void** container;
+    int count;
+    int max;
+    void** container;
 } Stack;
 
 /* Fonctions du module. */

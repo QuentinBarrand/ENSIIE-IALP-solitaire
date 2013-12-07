@@ -10,7 +10,7 @@
 
 #include <curses.h>
 
-#include "Sjeu.h"
+// #include "Sjeu.h"
 
 /** Taille maximale du champ de saisie de l'utilisateur. */
 #define MAX_INPUT 100

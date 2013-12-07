@@ -7,20 +7,20 @@ GCC_OPTS = -O3
 
 all: solitaire
 
-solitaire: lib/libsolitaire.a main.c
-	gcc -o solitaire $(GCC_OPTS) $(VERSION) $(BUILD) main.c lib/libsolitaire.a -lcurses
+solitaire: libsolitaire.a main.c
+	gcc -o solitaire $(GCC_OPTS) $(VERSION) $(BUILD) main.c libsolitaire.a -lcurses
 
-lib/libsolitaire.a: lib/Sjeu.o lib/Scoordutils.o lib/Sgui.o lib/Stack.o
-	ar -cr $@ lib/Sjeu.o lib/Scoordutils.o lib/Sgui.o lib/Stack.o
+libsolitaire.a: src/Sjeu.o src/Sgui.o lib/coordutils.o lib/Stack.o
+	ar -cr $@ src/Sjeu.o lib/coordutils.o src/Sgui.o lib/Stack.o
 
-lib/Scoordutils.o: lib/Scoordutils.h lib/Scoordutils.c
-	gcc -c -o $@ $(GCC_OPTS) $(VERSION) $(BUILD) lib/Scoordutils.c
+src/Sgui.o: src/Sgui.c src/Sgui.c
+	gcc -c -o $@ $(GCC_OPTS) $(VERSION) $(BUILD) src/Sgui.c
 
-lib/Sgui.o: lib/Sgui.c lib/Sgui.c
-	gcc -c -o $@ $(GCC_OPTS) $(VERSION) $(BUILD) lib/Sgui.c
+src/Sjeu.o: src/Sjeu.h src/Sjeu.c
+	gcc -c -o $@ $(GCC_OPTS) $(VERSION) $(BUILD) src/Sjeu.c
 
-lib/Sjeu.o: lib/Sjeu.h lib/Sjeu.c
-	gcc -c -o $@ $(GCC_OPTS) $(VERSION) $(BUILD) lib/Sjeu.c
+lib/coordutils.o: lib/coordutils.h lib/coordutils.c
+	gcc -c -o $@ $(GCC_OPTS) $(VERSION) $(BUILD) lib/coordutils.c
 
 lib/Stack.o: lib/Stack.c lib/Stack.h
 	gcc -c -o $@ $(GCC_OPTS) $(VERSION) $(BUILD) lib/Stack.c
@@ -33,5 +33,7 @@ dev:
 	make GCC_OPTS="-Wall -Wextra -DDEBUG -g -O2"
 
 clean:
-	cd lib/; rm -f *.a *.o
+	cd lib/; rm -f *.o
+	cd src/; rm -f *.o
+	rm *.a
 	rm solitaire

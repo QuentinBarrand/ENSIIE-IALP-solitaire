@@ -78,8 +78,6 @@ extern void Sgui_Splash(WINDOW* app_window)
 
     getch();
     clear();
-
-
 }
 
 
@@ -105,6 +103,14 @@ extern void Sgui_StartupError(WINDOW* app_window, char* message)
     create_color();
     attron(COLOR_PAIR(10));
     mvwprintw(app_window, 20, 20, message);
+}
+
+
+extern void Sgui_RuntimeSuccess(WINDOW* app_window, char* message)
+{
+    create_color();
+    attron(COLOR_PAIR(10));
+    mvwprintw(app_window, LINES - 1, 0, message);
 }
 
 

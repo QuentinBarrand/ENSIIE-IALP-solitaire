@@ -8,9 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-#include "lib/Sjeu.h"
-#include "lib/Sconsts.h"
+#include "src/Sjeu.h"
 
 /** Fonction main : point d'entrée de l'application. */
 int main(int argc, char** argv) 

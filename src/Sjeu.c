@@ -8,11 +8,12 @@
 #include <string.h>
 #include <curses.h>
  
-#include "Scoordutils.h"
 #include "Sconsts.h"
 #include "Sgui.h"
 #include "Sjeu.h"
-#include "Stack.h"
+
+#include "../lib/coordutils.h"
+#include "../lib/Stack.h"
 
 /** Taille des cotés du damier par défaut. */
 #define T_TAILLE 7
@@ -106,7 +107,7 @@ extern int Sjeu_LoadOptions(options* config, int argc, char** argv)
              */
             if(config->confExists == FALSE)
             {
-                config->confPath = malloc(MAX_PATH);
+                config->confPath = malloc(strlen(argv[i]));
                 strcpy(config->confPath, argv[i]);
                 config->confExists = TRUE;
             }
@@ -179,14 +180,28 @@ extern int Sjeu_New(options* config)
     {
         Sgui_ReadCoup(userinput);
     
-        Scoordutils_ToIntCoord(userinput, coord, jeu.width, jeu.length);
+        coordutils_ToIntCoord(userinput, coord, jeu.width, jeu.length);
         
         current_coup.depart.a  = coord[0];
         current_coup.depart.o  = coord[1];
         current_coup.arrivee.a = coord[2];
         current_coup.arrivee.o = coord[3];
 
-        Sjeu_Jouer(&jeu, &config, current_coup);
+        switch(Sjeu_Jouer(&jeu, &config, current_coup))
+        {
+            case 0:
+                break;
+
+            case 1:
+                fprintf(stderr, "Votre saisie contient des caractères "
+                    "non valides.\n");
+                continue;
+
+            case 2:
+                fprintf(stderr, "Votre saisie contient des caractères "
+                    "hors du damier.\n");
+                continue;
+        }
     }
 
     refresh();
@@ -337,7 +352,7 @@ static int Sjeu_CoupPossible(damier* jeu, options* config, coup current_coup)
 }
 
 
-static int Sjeu_EstGagnant(damier* jeu, options* config)
+static int Sjeu_IsOver(damier* jeu, options* config)
 {
     int l1, c1, l2, c2;
     
@@ -390,7 +405,7 @@ static int Sjeu_Initialiser(options* config, damier* jeu, int def)
 
     if(config->confExists == TRUE && def == FALSE)
     {
-        int i = 0, l, c, refWidth;
+        int i = 0, l, c;
         char tabString[MAX_TAILLE][MAX_TAILLE];
 
         FILE* stream;

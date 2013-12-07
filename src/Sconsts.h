@@ -17,7 +17,4 @@
 /** Constante pratique. */
 #define TRUE    1
 
-/** Taille maximale du chemin vers le fichier de configuration. */
-#define MAX_PATH    256
-
 #endif

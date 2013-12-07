@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "Scoordutils.h"
+#include "coordutils.h"
 
 /* Prototypes statiques */
 static int getOrdByNumber(char);
@@ -33,7 +33,7 @@ static int getAbsByLetter(char);
  *    - 1 la saisie contient des caractères non standards.
  *    - 2 la saisie contient des valeurs menant hors du damier.  
  */
-extern int Scoordutils_ToIntCoord(char* userinput, int* coord, int width, int length)
+extern int coordutils_ToIntCoord(char* userinput, int* coord, int width, int length)
 {
     const int FUNC_SUCCESS        = 0;
     const int FUNC_INCORRECT_CHAR = 1;
