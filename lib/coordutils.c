@@ -1,5 +1,5 @@
 /** 
- * \file Sutils.c 
+ * \file coordutils.c 
  * \brief Fonctions utilitaires de l'application.
  *
  * \author Quentin Barrand <quentin.barrand@ensiie.fr>
@@ -26,7 +26,8 @@ static int getAbsByLetter(char);
  * \param userinput saisie de l'utilisateur.
  * \param coord coordonnées calculées par la fonction et passées par adresse 
  *    pour récupérer son contenu.
- * \param config la configuration de l'application.
+ * \param width la largeur du damier.
+ * \param length la longueur du damieR.
  *
  * \return un code de statut :
  *    - 0 le calcul s'est déroulé correctement.

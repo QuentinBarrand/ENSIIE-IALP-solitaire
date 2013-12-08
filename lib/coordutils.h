@@ -1,6 +1,6 @@
 /**
- * \file Sutils.h
- * \brief Header pour le fichier Sutils.c.
+ * \file coordutils.h
+ * \brief Header pour le fichier coordutils.c.
  *
  * \author Quentin Barrand <quentin.barrand@ensiie.fr>
  */
@@ -8,6 +8,6 @@
 #define SCOORDUTILS_H_FILE
 
 /* Fonctions du module */
-extern int Scoordutils_ToIntCoord(char*, int*, int, int);
+extern int coordutils_ToIntCoord(char*, int*, int, int);
 
 #endif

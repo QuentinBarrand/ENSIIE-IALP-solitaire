@@ -1,20 +1,28 @@
 /**
  * \file Stack.h
- * \brief Header pour le fichier Stack.c.
+ * \brief Header for the Stack.c file.
  *
  * \author Quentin Barrand <quentin.barrand@ensiie.fr>
  */
 
 #ifndef STACK_H_FILE
 #define STACK_H_FILE
- 
+
+/** The Stack data structure. */
 typedef struct Stack {
+    /** Number of elements actually present in the stack. */
     int count;
+
+    /** Maximum size of the stack. */
     int max;
+
+    /** Double array of pointers that will link to elements you push in the
+     * stack.
+     */
     void** container;
 } Stack;
 
-/* Fonctions du module. */
+/* Module functions */
 extern Stack* Stack_New(int size);
 extern void   Stack_Free(Stack* stack);
 extern int    Stack_Size(Stack* stack);
