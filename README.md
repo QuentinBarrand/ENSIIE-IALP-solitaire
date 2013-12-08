@@ -8,7 +8,7 @@ The subject was the following :
 * Recode it using modules and add the ability for the user to import his own checkerboard (release 2.0);
 * Recode it using [ncurses](http://www.gnu.org/software/ncurses/) (release 3.0).
 
-## Compilation
+## Compilation ![Automated build by Travis CI](https://travis-ci.org/QuentinBarrand/ENSIIE-IALP-solitaire.png)
 Very simply, using make : `$ make`.  
 If you want to get all the debug feature and symbols, just call the `dev` target instead : `$ make dev`
 
