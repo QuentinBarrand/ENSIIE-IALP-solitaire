@@ -7,6 +7,7 @@
 
 #include <curses.h>
 #include <unistd.h>
+#include <string.h>
 
 #include "Sgui.h"
 
@@ -15,12 +16,7 @@ static void create_color()
     start_color();   /* Start color */
     init_pair(1,  COLOR_WHITE, COLOR_BLACK);
     init_pair(2,  COLOR_RED,   COLOR_BLACK);
-    init_pair(5,  COLOR_GREEN, COLOR_BLACK);
-    init_pair(6,  COLOR_RED,   COLOR_BLACK);
-    init_pair(10, COLOR_RED,   COLOR_BLACK);
-    init_pair(11, COLOR_RED,   COLOR_GREEN);
-    init_pair(20, COLOR_WHITE, COLOR_BLUE);
-    init_pair(21, COLOR_WHITE, COLOR_BLUE);
+    init_pair(3,  COLOR_GREEN, COLOR_BLACK);
 }
 
 
@@ -29,6 +25,21 @@ void Sgui_ReadCoup(char* userinput)
     echo();
     getstr(userinput);
     noecho();
+}
+
+
+extern WINDOW* Sgui_Initialiser()
+{
+    WINDOW* app_window = initscr();
+
+    cbreak();
+    noecho();
+    curs_set(0);
+    keypad(stdscr, TRUE);
+    create_color();
+    refresh();
+
+    return app_window;
 }
 
 
@@ -42,9 +53,10 @@ extern void Sgui_Splash(WINDOW* app_window)
     mvwprintw(app_window, 1, 0, "Build : " BUILD);
     #endif
 
-    int x_offset = (LINES / 2) - 4, y_offset = (COLS / 2) - 40;
+    int x_offset = (LINES / 2) - 4;
+    int y_offset = (COLS / 2) - 31;
 
-    if(COLS >= 80)
+    if(COLS >= 65)
     {
         /* THE splash ;-) */
         mvwprintw(app_window, x_offset + 0, y_offset, 
@@ -68,53 +80,53 @@ extern void Sgui_Splash(WINDOW* app_window)
             "    \\/_____/\\/___/ \\/____/ \\/_/\\/__/\\/__/\\/_/ \\/_/\\/_/"
             " \\/____/");
     }
+    else
+        mvwprintw(app_window, LINES / 2, COLS / 2 - 4, "SOLITAIRE");
 
-    /* A ajouter :
-     * Par AUTEUR
-     * Appuyez sur une touche pour commencer...
-     */ 
+    mvwprintw(app_window, x_offset + 8, COLS / 2 - 14, "ENSIIE / IALP - FIPA6 "
+        "- 2013");  
 
-    refresh();    
-
-    getch();
-    clear();
-}
-
-
-extern WINDOW* Sgui_Initialiser()
-{
-    WINDOW* app_window = initscr();
-    // int dx = COLS;
-    // int dy = LINES;
-
-    cbreak();
-    noecho();
-    curs_set(0);
-    keypad(stdscr, TRUE);
-    create_color();
-    refresh();
-
-    return app_window;
-}
-
-
-extern void Sgui_StartupError(WINDOW* app_window, char* message)
-{
-    create_color();
-    attron(COLOR_PAIR(10));
-    mvwprintw(app_window, 20, 20, message);
+    mvwprintw(app_window, LINES - 2, COLS / 2 - 20, "Appuyez sur une touche "
+        "pour commencer !");  
 }
 
 
 extern void Sgui_RuntimeSuccess(WINDOW* app_window, char* message)
 {
     create_color();
-    attron(COLOR_PAIR(10));
+    attron(COLOR_PAIR(5));
     mvwprintw(app_window, LINES - 1, 0, message);
+    attron(COLOR_PAIR(1));
 }
 
 
-extern void Sgui_Terminer()
+extern void Sgui_RuntimeError(WINDOW* app_window, char* message)
 {
+    create_color();
+    attron(COLOR_PAIR(10));
+    mvwprintw(app_window, LINES - 1, 0, message);
+    attron(COLOR_PAIR(1));
+}
+
+
+extern void Sgui_StartupError(WINDOW* app_window, char* message)
+{
+    int x_offset = (LINES / 2) + 6;
+
+    create_color();
+    attron(COLOR_PAIR(10));
+    mvwprintw(app_window, x_offset, (COLS / 2) - (strlen(message) / 2),
+        message);
+    attron(COLOR_PAIR(1));
+}
+
+
+extern void Sgui_Terminer(WINDOW* app_window)
+{
+    clear();
+    mvwprintw(app_window, LINES / 2, COLS / 2 - 17, "Merci d'avoir joué, à "
+        "bientôt !");
+    refresh();
+    sleep(3);
     endwin();
 }

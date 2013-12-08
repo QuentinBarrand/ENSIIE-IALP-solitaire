@@ -5,6 +5,7 @@
  * \author Quentin Barrand <quentin.barrand@ensiie.fr>
  */
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <curses.h>
  
@@ -131,42 +132,50 @@ extern int Sjeu_New(options* config)
 {
     WINDOW* app_window = Sgui_Initialiser();
 
-    #ifndef DEBUG
-    Sgui_Splash(app_window);
-    #endif
-
     /* Génération damier */
     damier jeu;
-    switch(Sjeu_Initialiser(config, &jeu, FALSE))
+    char* error;
+    int init = Sjeu_Initialiser(config, &jeu, FALSE);
+
+    switch(init)
     {
         case 1:
-            Sgui_StartupError(app_window, "Le fichier de configuration "
-                "contient des valeurs non prévues. Utilisation du damier "
-                "par défaut.\n");
-
+            error = "Le fichier de configuration contient des valeurs non "
+                "prévues. Utilisation du damier par défaut.";
             Sjeu_Initialiser(config, &jeu, TRUE);
+
             break;
 
         case 2:
-            Sgui_StartupError(app_window, "Le fichier de configuration "
-                "contient des lignes dont la longueur n'est pas identique. "
-                "Utilisation du damier par défaut.\n");
-
+            error = "Le fichier de configuration contient des lignes dont "
+                "la longueur n'est pas identique. Utilisation du damier par "
+                "défaut.";
             Sjeu_Initialiser(config, &jeu, TRUE);
+
             break;
 
         case 3:
-            Sgui_StartupError(app_window, "Le fichier de configuration ne "
-                "contient aucune ligne valide.\n");
+            error = "Le fichier de configuration ne contient aucune ligne "
+                "valide.";
+            Sjeu_Initialiser(config, &jeu, TRUE);
+
             break;
 
         case 4:
-            Sgui_StartupError(app_window, "Le fichier de configuration "
-                "spécifié est introuvable.\n");
-
+            error = "Le fichier de configuration spécifié est introuvable.";
             Sjeu_Initialiser(config, &jeu, TRUE);
+
             break;
     }
+
+    /* Affichage du splash screen - en RELEASE uniquement */
+    #ifndef DEBUG
+    Sgui_Splash(app_window);
+    if(init != 0) Sgui_StartupError(app_window, error);
+
+    getch();
+    clear();
+    #endif
 
     Sjeu_Afficher(app_window, &jeu, 0);
 
@@ -179,6 +188,27 @@ extern int Sjeu_New(options* config)
     while(TRUE)
     {
         Sgui_ReadCoup(userinput);
+
+        int nbchars = strlen(userinput);
+
+        if(nbchars == 0 || (nbchars > 1 && nbchars < 4) || nbchars > 4)
+        {
+            Sgui_RuntimeError(app_window, "Merci de saisir une commande "
+                "valide");
+            continue;
+        }
+
+        if(strlen(userinput) == 1)
+        {
+            switch(userinput[0])
+            {
+                case '?':
+                    /* Afficher l'aide */
+                case 'q':
+                    Sgui_Terminer(app_window);
+                    return EXIT_SUCCESS;
+            }
+        }
     
         coordutils_ToIntCoord(userinput, coord, jeu.width, jeu.length);
         
@@ -190,18 +220,21 @@ extern int Sjeu_New(options* config)
         switch(Sjeu_Jouer(&jeu, &config, current_coup))
         {
             case 0:
+                Sgui_RuntimeSuccess(app_window, "Le coup a bien été joué !");
                 break;
 
             case 1:
-                fprintf(stderr, "Votre saisie contient des caractères "
-                    "non valides.\n");
+                Sgui_RuntimeError(app_window, "Votre saisie contient des "
+                    "caractères non valides.");
                 continue;
 
             case 2:
-                fprintf(stderr, "Votre saisie contient des caractères "
-                    "hors du damier.\n");
+                Sgui_RuntimeError(app_window, "Votre saisie contient des "
+                    "caractères hors du damier.");
                 continue;
         }
+
+        Sjeu_Afficher(app_window, &jeu, 0);
     }
 
     refresh();
