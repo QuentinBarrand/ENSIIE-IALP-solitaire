@@ -48,11 +48,11 @@ For example, this model :
 </pre>
 will give the following checkerboard :
 <pre>
-     A  B  C
-   ----------
-1 |  #  -  #
-2 |  #  -  #
-3 |  #     #
+     A  B  C  D  E
+   ---------------
+1 |  #  #  -  #  #
+2 |  #  #  -  #  #
+3 |  #  #     #  #
 </pre>
 
 **Beware !** Configuration file should not exceed 26 lines in height and 26 columns in width.
