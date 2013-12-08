@@ -10,14 +10,16 @@
 
 #include <curses.h>
 
-// #include "Sjeu.h"
-
-/** Taille maximale du champ de saisie de l'utilisateur. */
+/** La taille maximale de la saisie de l'utilisateur */
 #define MAX_INPUT 100
 
 /* Fonctions externes du module. */
 extern WINDOW* Sgui_Initialiser();
-extern void Sgui_Splash(WINDOW*);
-extern void Sgui_StartupError(WINDOW*, char*);
+extern void    Sgui_ReadCoup(char*);
+extern void    Sgui_RuntimeError(WINDOW*, char*);
+extern void    Sgui_RuntimeSuccess(WINDOW*, char*);
+extern void    Sgui_Splash(WINDOW*);
+extern void    Sgui_StartupError(WINDOW*, char*);
+extern void    Sgui_Terminer(WINDOW*);
 
 #endif

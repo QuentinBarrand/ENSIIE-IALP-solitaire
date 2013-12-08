@@ -11,16 +11,16 @@
 
 #include "Sgui.h"
 
-static void create_color()
-{
-    start_color();   /* Start color */
-    init_pair(1,  COLOR_WHITE, COLOR_BLACK);
-    init_pair(2,  COLOR_RED,   COLOR_BLACK);
-    init_pair(3,  COLOR_GREEN, COLOR_BLACK);
-}
+/* Prototypes statiques */
+static void create_color();
 
 
-void Sgui_ReadCoup(char* userinput)
+/*
+ * Fonctions externes
+ */
+
+
+extern void Sgui_ReadCoup(char* userinput)
 {
     echo();
     getstr(userinput);
@@ -40,6 +40,26 @@ extern WINDOW* Sgui_Initialiser()
     refresh();
 
     return app_window;
+}
+
+
+extern void Sgui_RuntimeError(WINDOW* app_window, char* message)
+{
+    create_color();
+    attron(COLOR_PAIR(10));
+    mvwprintw(app_window, LINES - 1, 0, message);
+    attron(COLOR_PAIR(1));
+    refresh();
+}
+
+
+extern void Sgui_RuntimeSuccess(WINDOW* app_window, char* message)
+{
+    create_color();
+    attron(COLOR_PAIR(5));
+    mvwprintw(app_window, LINES - 1, 0, message);
+    attron(COLOR_PAIR(1));
+    refresh();
 }
 
 
@@ -91,24 +111,6 @@ extern void Sgui_Splash(WINDOW* app_window)
 }
 
 
-extern void Sgui_RuntimeSuccess(WINDOW* app_window, char* message)
-{
-    create_color();
-    attron(COLOR_PAIR(5));
-    mvwprintw(app_window, LINES - 1, 0, message);
-    attron(COLOR_PAIR(1));
-}
-
-
-extern void Sgui_RuntimeError(WINDOW* app_window, char* message)
-{
-    create_color();
-    attron(COLOR_PAIR(10));
-    mvwprintw(app_window, LINES - 1, 0, message);
-    attron(COLOR_PAIR(1));
-}
-
-
 extern void Sgui_StartupError(WINDOW* app_window, char* message)
 {
     int x_offset = (LINES / 2) + 6;
@@ -129,4 +131,16 @@ extern void Sgui_Terminer(WINDOW* app_window)
     refresh();
     sleep(3);
     endwin();
+}
+
+/*
+ * Fonctions statiques
+ */
+
+static void create_color()
+{
+    start_color();   /* Start color */
+    init_pair(1,  COLOR_WHITE, COLOR_BLACK);
+    init_pair(2,  COLOR_RED,   COLOR_BLACK);
+    init_pair(3,  COLOR_GREEN, COLOR_BLACK);
 }

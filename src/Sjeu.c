@@ -30,10 +30,11 @@
 
 
 /* Prototypes statiques */
+static void Sjeu_Afficher(WINDOW*, damier*, int);
+static void Sjeu_AnnulerCoup(damier*, coup);
 static int  Sjeu_CoupPossible(damier*, options*, coup);
 static int  Sjeu_Initialiser(options*, damier*, int);
 static int  Sjeu_Jouer(damier*, options*, coup);
-static void Sjeu_Afficher(WINDOW*, damier*, int);
 
 
 /*
@@ -177,16 +178,19 @@ extern int Sjeu_New(options* config)
     clear();
     #endif
 
-    Sjeu_Afficher(app_window, &jeu, 0);
-
     char userinput[MAX_INPUT];
-    int coord[4];
+    int coord[4], turn = 0;
     coup current_coup;
+    Stack* histo = Stack_New(25);
 
     mvprintw(LINES - 2, 0, "Saisissez un coup (? pour l'aide) : ");
 
     while(TRUE)
     {
+        turn++;
+
+        Sjeu_Afficher(app_window, &jeu, 0);
+
         Sgui_ReadCoup(userinput);
 
         int nbchars = strlen(userinput);
@@ -198,12 +202,26 @@ extern int Sjeu_New(options* config)
             continue;
         }
 
+        coup* a_annuler;
+
+        /* Une seule lettre : une commande */
         if(strlen(userinput) == 1)
         {
             switch(userinput[0])
             {
                 case '?':
                     /* Afficher l'aide */
+
+                case 'p':
+                    if((a_annuler = (coup*)Stack_Pop(histo)) == NULL)
+                        Sgui_RuntimeError(app_window, "Impossible de charger "
+                            "le tour précédent.");
+                    else
+                        Sjeu_AnnulerCoup(&jeu, *a_annuler);
+                    
+                    turn--;
+                    continue;
+                
                 case 'q':
                     Sgui_Terminer(app_window);
                     return EXIT_SUCCESS;
@@ -217,7 +235,7 @@ extern int Sjeu_New(options* config)
         current_coup.arrivee.a = coord[2];
         current_coup.arrivee.o = coord[3];
 
-        switch(Sjeu_Jouer(&jeu, &config, current_coup))
+        switch(Sjeu_Jouer(&jeu, config, current_coup))
         {
             case 0:
                 Sgui_RuntimeSuccess(app_window, "Le coup a bien été joué !");
@@ -233,14 +251,12 @@ extern int Sjeu_New(options* config)
                     "caractères hors du damier.");
                 continue;
         }
-
-        Sjeu_Afficher(app_window, &jeu, 0);
     }
 
     refresh();
     getch();
 
-    Sgui_Terminer();
+    Sgui_Terminer(app_window);
 
     return FALSE;
 }
@@ -385,7 +401,7 @@ static int Sjeu_CoupPossible(damier* jeu, options* config, coup current_coup)
 }
 
 
-static int Sjeu_IsOver(damier* jeu, options* config)
+static int Sjeu_EstTermine(damier* jeu, options* config)
 {
     int l1, c1, l2, c2;
     
@@ -558,4 +574,18 @@ static int Sjeu_Jouer(damier* jeu, options* config, coup current_coup)
     jeu->nb_pion -= 1;
 
     return FUNC_SUCCESS;
+}
+
+
+/** Annule un coup.
+ *
+ * \param a_annuler le coup à annuler.
+ */
+static void Sjeu_AnnulerCoup(damier* jeu, coup a_annuler)
+{
+    jeu->table[a_annuler.depart.a][a_annuler.depart.o] = PION;
+    jeu->table[a_annuler.arrivee.a][a_annuler.arrivee.o] = LIBRE;
+
+    coordonnees centrale = Sjeu_CaseCentrale(a_annuler);
+    jeu->table[centrale.a][centrale.o] = PION;
 }

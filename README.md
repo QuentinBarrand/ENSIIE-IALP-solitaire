@@ -2,7 +2,7 @@
 
 This is a project I made during my first semester at [ENSIIE](http://www.ensiie.fr) to learn the C language.
 
-The subject was the following !
+The subject was the following :
 
 * Code a solitaire game (release 1.0);
 * Recode it using modules and add the ability for the user to import his own checkerboard (release 2.0);
@@ -16,10 +16,10 @@ If you want to get all the debug feature and symbols, just call the `dev` target
 `$ ./solitaire [options]`
 
 Options:  
- `-h` Prints this help and exits.  
- `-n` Allows vertical and horizontal moves (default).  
- `-d` Allows diagonal moves.   
- `<str>` Path to the configuration file (read nex section).
+`-h` Prints this help and exits.  
+`-n` Allows vertical and horizontal moves (default).  
+`-d` Allows diagonal moves.   
+`<str>` Path to the configuration file (read nex section).
 
 ## Configuration file
 The game uses the following checkerboard as the default :
