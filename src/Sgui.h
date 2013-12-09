@@ -10,8 +10,21 @@
 
 #include <curses.h>
 
+
 /** La taille maximale de la saisie de l'utilisateur */
 #define MAX_INPUT 100
+
+
+/** Type du message à afficher. */
+typedef enum message_type 
+{
+	/** Message décrivant une opération réussie. */
+	SUCCESS,
+
+	/** Message décrivant une erreur. */
+	ERROR
+} message_type;
+
 
 /* Fonctions externes du module. */
 extern WINDOW* Sgui_Initialiser();

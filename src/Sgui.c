@@ -23,6 +23,7 @@ static void create_color();
 extern void Sgui_ReadCoup(char* userinput)
 {
     echo();
+    mvprintw(LINES - 2, 0, "Saisissez un coup (? pour l'aide) : ");
     getstr(userinput);
     noecho();
 }
@@ -43,22 +44,22 @@ extern WINDOW* Sgui_Initialiser()
 }
 
 
-extern void Sgui_RuntimeError(WINDOW* app_window, char* message)
+extern void Sgui_RuntimeMessage(WINDOW* app_window, char* message, 
+    message_type type)
 {
     create_color();
-    attron(COLOR_PAIR(10));
-    mvwprintw(app_window, LINES - 1, 0, message);
-    attron(COLOR_PAIR(1));
-    refresh();
-}
 
+    if(type == SUCCESS)
+        attron(COLOR_PAIR(3));
+    else if(type == ERROR)
+        attron(COLOR_PAIR(2));
 
-extern void Sgui_RuntimeSuccess(WINDOW* app_window, char* message)
-{
-    create_color();
-    attron(COLOR_PAIR(5));
     mvwprintw(app_window, LINES - 1, 0, message);
+    sleep(3);
+
     attron(COLOR_PAIR(1));
+    mvwhline (app_window, LINES - 1, 0, ' ', COLS);
+    mvwhline (app_window, LINES - 2, 36, ' ', COLS - 36);
     refresh();
 }
 
@@ -116,7 +117,7 @@ extern void Sgui_StartupError(WINDOW* app_window, char* message)
     int x_offset = (LINES / 2) + 6;
 
     create_color();
-    attron(COLOR_PAIR(10));
+    attron(COLOR_PAIR(2));
     mvwprintw(app_window, x_offset, (COLS / 2) - (strlen(message) / 2),
         message);
     attron(COLOR_PAIR(1));

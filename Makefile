@@ -13,7 +13,7 @@ solitaire: libsolitaire.a main.c
 libsolitaire.a: src/Sjeu.o src/Sgui.o lib/coordutils.o lib/Stack.o
 	ar -cr $@ src/Sjeu.o lib/coordutils.o src/Sgui.o lib/Stack.o
 
-src/Sgui.o: src/Sgui.c src/Sgui.c
+src/Sgui.o: src/Sgui.h src/Sgui.c
 	gcc -c -o $@ $(GCC_OPTS) $(VERSION) $(BUILD) src/Sgui.c
 
 src/Sjeu.o: src/Sjeu.h src/Sjeu.c

@@ -7,6 +7,7 @@
 #ifndef SJEU_H_FILE
 #define SJEU_H_FILE
 
+
 /** Options du programme. */
 typedef struct options 
 {

@@ -183,8 +183,6 @@ extern int Sjeu_New(options* config)
     coup current_coup;
     Stack* histo = Stack_New(25);
 
-    mvprintw(LINES - 2, 0, "Saisissez un coup (? pour l'aide) : ");
-
     while(TRUE)
     {
         turn++;
@@ -195,10 +193,11 @@ extern int Sjeu_New(options* config)
 
         int nbchars = strlen(userinput);
 
+        /* Nombre de caractères saisis incorrect */
         if(nbchars == 0 || (nbchars > 1 && nbchars < 4) || nbchars > 4)
         {
-            Sgui_RuntimeError(app_window, "Merci de saisir une commande "
-                "valide");
+            Sgui_RuntimeMessage(app_window, "Merci de saisir une commande "
+                "valide", ERROR);
             continue;
         }
 
@@ -214,8 +213,8 @@ extern int Sjeu_New(options* config)
 
                 case 'p':
                     if((a_annuler = (coup*)Stack_Pop(histo)) == NULL)
-                        Sgui_RuntimeError(app_window, "Impossible de charger "
-                            "le tour précédent.");
+                        Sgui_RuntimeMessage(app_window, "Impossible de charger "
+                            "le tour précédent.", ERROR);
                     else
                         Sjeu_AnnulerCoup(&jeu, *a_annuler);
                     
@@ -225,6 +224,11 @@ extern int Sjeu_New(options* config)
                 case 'q':
                     Sgui_Terminer(app_window);
                     return EXIT_SUCCESS;
+
+                default:
+                    Sgui_RuntimeMessage(app_window, "Commande non reconnue.",
+                        ERROR);
+                    continue;
             }
         }
     
@@ -238,23 +242,23 @@ extern int Sjeu_New(options* config)
         switch(Sjeu_Jouer(&jeu, config, current_coup))
         {
             case 0:
-                Sgui_RuntimeSuccess(app_window, "Le coup a bien été joué !");
-                break;
-
+                Sjeu_Afficher(app_window, &jeu, config);
+                Sgui_RuntimeMessage(app_window, "Le coup a bien été joué !", 
+                    SUCCESS);
+                continue;
             case 1:
-                Sgui_RuntimeError(app_window, "Votre saisie contient des "
-                    "caractères non valides.");
+                Sgui_RuntimeMessage(app_window, "Votre saisie contient des "
+                    "caractères non valides.", ERROR);
+                turn--;
                 continue;
 
             case 2:
-                Sgui_RuntimeError(app_window, "Votre saisie contient des "
-                    "caractères hors du damier.");
+                Sgui_RuntimeMessage(app_window, "Votre saisie contient des "
+                    "caractères hors du damier.", ERROR);
+                turn--;
                 continue;
         }
     }
-
-    refresh();
-    getch();
 
     Sgui_Terminer(app_window);
 
