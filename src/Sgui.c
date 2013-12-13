@@ -20,15 +20,28 @@ static void create_color();
  */
 
 
-extern void Sgui_ReadCoup(char* userinput)
+/** Lit la chaîne de caractères saisie par l'utilisateur.
+ *
+ * \param userinput une chaîne de caractères correctement allouée. Passée par
+ *    référence.
+ *
+ * \return la longueur de la chaîne lue.
+ */
+extern int Sgui_ReadCoup(char* userinput)
 {
     echo();
     mvprintw(LINES - 2, 0, "Saisissez un coup (? pour l'aide) : ");
     getstr(userinput);
     noecho();
+
+    return strlen(userinput);
 }
 
 
+/** Initialise la fenêtre curses de l'application.
+ *
+ * \return la fenêtre curses correctement initialisée.
+ */
 extern WINDOW* Sgui_Initialiser()
 {
     WINDOW* app_window = initscr();
@@ -44,6 +57,14 @@ extern WINDOW* Sgui_Initialiser()
 }
 
 
+/** Affiche un message pendant l'exécution de l'application.
+ *
+ * \param app_window la fenêtre curses de l'application.
+ * \param message le message à afficher.
+ * \param type le type de message à afficher:
+ *    - SUCCES : message de succès, en vert.
+ *    - ERROR : message d'erreur, en rouge.
+ */
 extern void Sgui_RuntimeMessage(WINDOW* app_window, char* message, 
     message_type type)
 {
@@ -65,6 +86,10 @@ extern void Sgui_RuntimeMessage(WINDOW* app_window, char* message,
 }
 
 
+/** Affiche l'écrand de lancement.
+ *
+ * \param app_window la fenêtre curses de l'application.
+ */
 extern void Sgui_Splash(WINDOW* app_window)
 {
     #ifdef VERSION
@@ -113,6 +138,11 @@ extern void Sgui_Splash(WINDOW* app_window)
 }
 
 
+/** Affiche un message au démarrage de l'application.
+ *
+ * \param app_window la fenêtre curses de l'application.
+ * \param message le message à afficher.
+ */
 extern void Sgui_StartupError(WINDOW* app_window, char* message)
 {
     int x_offset = (LINES / 2) + 6;
@@ -125,6 +155,10 @@ extern void Sgui_StartupError(WINDOW* app_window, char* message)
 }
 
 
+/** Termine la fenêtre principale de l'application.
+ *
+ * \param app_window la fenêtre curses de l'application.
+ */
 extern void Sgui_Terminer(WINDOW* app_window)
 {
     clear();

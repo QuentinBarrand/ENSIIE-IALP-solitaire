@@ -10,6 +10,7 @@
 
 #include "Stack.h"
 
+/** The default size of a Stack when the parameter is not specified. */
 #define DEFAULT_SIZE 5 
 
 

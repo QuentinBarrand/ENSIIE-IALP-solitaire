@@ -34,6 +34,7 @@ static void Sjeu_Afficher(WINDOW*, damier*, int);
 static void Sjeu_AnnulerCoup(damier*, coup);
 static int  Sjeu_CoupPossible(damier*, options*, coup);
 static int  Sjeu_Initialiser(options*, damier*, int);
+static int  Sjeu_EstTermine(damier*, options*);
 static int  Sjeu_Jouer(damier*, options*, coup);
 
 
@@ -125,8 +126,8 @@ extern int Sjeu_LoadOptions(options* config, int argc, char** argv)
 
 /** Point d'entrée du module de jeu. Créé un nouveau jeu.
  *
- * \param config l'instance d'options de l'application
- *.
+ * \param config l'instance d'options de l'application.
+ *
  * \return le code de retour à retourner au processus père.
  */
 extern int Sjeu_New(options* config)
@@ -178,19 +179,18 @@ extern int Sjeu_New(options* config)
     clear();
     #endif
 
-    char userinput[MAX_INPUT];
     int coord[4], turn = 0;
     Stack* histo = Stack_New(25);
 
-    while(TRUE)
+    while(Sjeu_EstTermine(&jeu, config) == FALSE)
     {
         turn++;
 
         Sjeu_Afficher(app_window, &jeu, turn);
-
-        Sgui_ReadCoup(userinput);
-
-        int nbchars = strlen(userinput);
+    
+        char userinput[MAX_INPUT];
+        
+        int nbchars = Sgui_ReadCoup(userinput);
 
         /* Nombre de caractères saisis incorrect */
         if(nbchars == 0 || (nbchars > 1 && nbchars < 4) || nbchars > 4)
@@ -203,7 +203,7 @@ extern int Sjeu_New(options* config)
         coup* a_annuler;
 
         /* Une seule lettre : une commande */
-        if(strlen(userinput) == 1)
+        if(nbchars == 1)
         {
             switch(userinput[0])
             {
@@ -212,21 +212,31 @@ extern int Sjeu_New(options* config)
 
                 case 'p':
                     if((a_annuler = (coup*)Stack_Pop(histo)) == NULL)
+                    {
                         Sgui_RuntimeMessage(app_window, "Impossible de charger "
                             "le tour précédent.", ERROR);
+                        turn--;
+                    }
                     else
+                    {                        
+                        Sgui_RuntimeMessage(app_window, "Retour au tour "
+                            "précédent.", SUCCESS);
                         Sjeu_AnnulerCoup(&jeu, *a_annuler);
-                    
-                    turn--;
+                        turn -= 2;
+                    }
+
                     continue;
                 
                 case 'q':
                     Sgui_Terminer(app_window);
+
                     return EXIT_SUCCESS;
 
                 default:
                     Sgui_RuntimeMessage(app_window, "Commande non reconnue.",
                         ERROR);
+                    turn--;
+
                     continue;
             }
         }
@@ -251,19 +261,36 @@ extern int Sjeu_New(options* config)
                 continue;
 
             case 1:
-                Sgui_RuntimeMessage(app_window, "Votre saisie contient des "
-                    "caractères non valides.", ERROR);
+                Sgui_RuntimeMessage(app_window, "La case de départ n'est pas "
+                    "occupée par un pion.", ERROR);
                 turn--;
-
-                continue;
+                break;
 
             case 2:
-                Sgui_RuntimeMessage(app_window, "Votre saisie contient des "
-                    "caractères hors du damier.", ERROR);
+                Sgui_RuntimeMessage(app_window, "La case d'arrivée n'est pas "
+                    "libre.", ERROR);
                 turn--;
+                break;
 
-                continue;
+            case 3:
+                Sgui_RuntimeMessage(app_window, "La case centrale n'est pas "
+                    "libre.", ERROR);
+                turn--;
+                break;
+
+            case 4:
+                Sgui_RuntimeMessage(app_window, "Le mouvement n'est pas "
+                    "autorisé par les optons de la ligne de commande.", ERROR);
+                turn--;
+                break;
+
+            case 5:
+                Sgui_RuntimeMessage(app_window, "La distance entre deux cases "
+                    "n'est pas égale à 2.", ERROR);
+                break;
         }
+
+        turn--;
     }
 
     Sgui_Terminer(app_window);
@@ -332,6 +359,13 @@ static void Sjeu_Afficher(WINDOW* app_window, damier* jeu, int turn)
 }
 
 
+/** Retourne la case centrale d'un coup (entre la case de départ et celle
+ * d'arrivée).
+ *
+ * \param current_coup le coup dont on souhaite obtenir la case centrale.
+ *
+ * \return les coordonnées de la case centrale du coup.
+ */
 static coordonnees Sjeu_CaseCentrale(coup current_coup)
 {
     coordonnees centrale;
@@ -354,9 +388,7 @@ static coordonnees Sjeu_CaseCentrale(coup current_coup)
  *
  * \param jeu une instance de damier.
  * \param config la configuration de l'application.
- * \param depart les coordonnées de la case de départ.
- * \param arrivee les coordonnées de la case centrale.
- * \param arrivee les coordonnées de la case d'arrivée.
+ * \param current_coup le coup à jouer.
  *
  * \return un code de statut
  *    - 1 : la case de départ n'est pas occupée par un pion.
@@ -486,6 +518,7 @@ static int Sjeu_Initialiser(options* config, damier* jeu, int def)
                 return FUNC_LINES_NOT_EQUAL;
 
         jeu->length = i;
+        jeu->nb_pion = 0;
 
         /* Allocation de jeu->table */
         jeu->table = malloc(jeu->width * sizeof(cases*));
@@ -518,6 +551,8 @@ static int Sjeu_Initialiser(options* config, damier* jeu, int def)
                 }
             }
         }
+
+        jeu->nb_pion++;
     }
     else
     {
@@ -556,8 +591,7 @@ static int Sjeu_Initialiser(options* config, damier* jeu, int def)
  *
  * \param jeu une instance de damier.
  * \param config la configuration de l'application.
- * \param depart les coordonnées de la case de départ.
- * \param arrivee les coordonnées de la case d'arrivée.
+ * \param current_coup le coup à jouer.
  *
  * \return un code de statut
  *    - 1 : la case de départ n'est pas occupée par un pion
@@ -589,6 +623,7 @@ static int Sjeu_Jouer(damier* jeu, options* config, coup current_coup)
 
 /** Annule un coup.
  *
+ * \param jeu l'instance du damier sur lequel annuler le coup.
  * \param a_annuler le coup à annuler.
  */
 static void Sjeu_AnnulerCoup(damier* jeu, coup a_annuler)
