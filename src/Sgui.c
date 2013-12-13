@@ -55,9 +55,10 @@ extern void Sgui_RuntimeMessage(WINDOW* app_window, char* message,
         attron(COLOR_PAIR(2));
 
     mvwprintw(app_window, LINES - 1, 0, message);
-    sleep(3);
+    refresh();
 
     attron(COLOR_PAIR(1));
+    sleep(3);
     mvwhline (app_window, LINES - 1, 0, ' ', COLS);
     mvwhline (app_window, LINES - 2, 36, ' ', COLS - 36);
     refresh();

@@ -180,14 +180,13 @@ extern int Sjeu_New(options* config)
 
     char userinput[MAX_INPUT];
     int coord[4], turn = 0;
-    coup current_coup;
     Stack* histo = Stack_New(25);
 
     while(TRUE)
     {
         turn++;
 
-        Sjeu_Afficher(app_window, &jeu, 0);
+        Sjeu_Afficher(app_window, &jeu, turn);
 
         Sgui_ReadCoup(userinput);
 
@@ -234,28 +233,35 @@ extern int Sjeu_New(options* config)
     
         coordutils_ToIntCoord(userinput, coord, jeu.width, jeu.length);
         
-        current_coup.depart.a  = coord[0];
-        current_coup.depart.o  = coord[1];
-        current_coup.arrivee.a = coord[2];
-        current_coup.arrivee.o = coord[3];
+        coup* current_coup = (coup*)malloc(sizeof(coup));
+        current_coup->depart.a  = coord[0];
+        current_coup->depart.o  = coord[1];
+        current_coup->arrivee.a = coord[2];
+        current_coup->arrivee.o = coord[3];
 
-        switch(Sjeu_Jouer(&jeu, config, current_coup))
+        switch(Sjeu_Jouer(&jeu, config, *current_coup))
         {
             case 0:
-                Sjeu_Afficher(app_window, &jeu, config);
+                Sjeu_Afficher(app_window, &jeu, turn + 1);
                 Sgui_RuntimeMessage(app_window, "Le coup a bien été joué !", 
                     SUCCESS);
+
+                Stack_Push(current_coup, histo);
+
                 continue;
+
             case 1:
                 Sgui_RuntimeMessage(app_window, "Votre saisie contient des "
                     "caractères non valides.", ERROR);
                 turn--;
+
                 continue;
 
             case 2:
                 Sgui_RuntimeMessage(app_window, "Votre saisie contient des "
                     "caractères hors du damier.", ERROR);
                 turn--;
+
                 continue;
         }
     }
@@ -285,7 +291,7 @@ static void Sjeu_Afficher(WINDOW* app_window, damier* jeu, int turn)
     int y_offset = 4;
 
     mvprintw(0, 0, "Solitaire v" VERSION);
-    mvprintw(y_offset - 2, x_offset + 5, "Tour n°%d", turn + 1);
+    mvprintw(y_offset - 2, x_offset + 5, "Tour n°%d", turn);
 
     for(c = 0; c < jeu->width; c++)
     {
