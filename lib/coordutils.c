@@ -32,9 +32,10 @@ static int getAbsByLetter(char);
  * \return un code de statut :
  *    - 0 le calcul s'est déroulé correctement.
  *    - 1 la saisie contient des caractères non standards.
- *    - 2 la saisie contient des valeurs menant hors du damier.  
+ *    - 2 la saisie contient des valeurs menant hors du damier.
  */
-extern int coordutils_ToIntCoord(char* userinput, int* coord, int width, int length)
+extern int coordutils_ToIntCoord(char* userinput, int* coord, int width, 
+    int length)
 {
     const int FUNC_SUCCESS        = 0;
     const int FUNC_INCORRECT_CHAR = 1;

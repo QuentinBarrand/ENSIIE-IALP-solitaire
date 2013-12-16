@@ -182,7 +182,7 @@ extern int Sjeu_New(options* config)
     int coord[4], turn = 0;
     Stack* histo = Stack_New(25);
 
-    while(Sjeu_EstTermine(&jeu, config) == FALSE)
+    while(Sjeu_EstTermine(&jeu, config) == 0)
     {
         turn++;
 
@@ -241,7 +241,21 @@ extern int Sjeu_New(options* config)
             }
         }
     
-        coordutils_ToIntCoord(userinput, coord, jeu.width, jeu.length);
+        /* 4 caractères : les coordonnées d'un coup */
+        switch(coordutils_ToIntCoord(userinput, coord, jeu.width, jeu.length))
+        {
+            case 1:
+                Sgui_RuntimeMessage(app_window, "Votre saisie contient des "
+                    "caractères non standards.", ERROR);
+                turn--;
+                continue;
+
+            case 2:
+                Sgui_RuntimeMessage(app_window, "Votre saisie contient des "
+                    "valeurs menant hors du damier.", ERROR);
+                turn--;
+                continue;            
+        }
         
         coup* current_coup = (coup*)malloc(sizeof(coup));
         current_coup->depart.a  = coord[0];
@@ -292,6 +306,13 @@ extern int Sjeu_New(options* config)
 
         turn--;
     }
+
+    if(Sjeu_EstTermine(&jeu, config) == 1)
+        /* Perdu */
+    else if(Sjeu_EstTermine(&jeu, config) == 2)
+        /* Gagné ! */
+
+    getch();
 
     Sgui_Terminer(app_window);
 
@@ -443,8 +464,22 @@ static int Sjeu_CoupPossible(damier* jeu, options* config, coup current_coup)
 }
 
 
+/** Vérifie si le jeu est terminé ou bloqué.
+ *
+ * \param jeu l'instance de damier.
+ * \param config la configuration de l'application.
+ *
+ * \return un code de statut :
+ *    - 0 : le jeu n'est pas terminé.
+ *    - 1 : le jeu est gagné.
+ *    - 2 : le jeu est bloqué.
+ */
 static int Sjeu_EstTermine(damier* jeu, options* config)
 {
+    const int FUNC_NOT_OVER = 0;
+    const int FUNC_WIN      = 1;
+    const int FUNC_BLOCKED  = 2;
+
     int l1, c1, l2, c2;
     
     for(c1 = 0; c1 < jeu->width; c1++)
@@ -463,14 +498,15 @@ static int Sjeu_EstTermine(damier* jeu, options* config)
                     coup_teste.arrivee.o = l2;
 
                     if(Sjeu_CoupPossible(jeu, config, coup_teste) != TRUE) 
-                        return FALSE;
+                        return FUNC_NOT_OVER;
                 }
             }
 
         }
     }
 
-    return TRUE;
+    if(jeu->nb_pion == 1) return FUNC_WIN;
+    else return FUNC_BLOCKED;
 }
 
 
