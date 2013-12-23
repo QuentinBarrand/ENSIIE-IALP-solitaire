@@ -20,6 +20,38 @@ static void create_color();
  */
 
 
+/**
+ *
+ */
+extern void Sgui_Help(WINDOW* app_window, int table_width, int print)
+{
+    int x_offset = 6 + table_width * 3 + 10;
+    int y_offset = 4;
+
+    if(print == TRUE)
+    {
+        mvwprintw(app_window, y_offset,     x_offset, "Aide :");
+        mvwprintw(app_window, y_offset + 2, x_offset, "LnnLnn : coordonnées");
+        mvwprintw(app_window, y_offset + 3, x_offset, "\tL : lettre");
+        mvwprintw(app_window, y_offset + 4, x_offset, "\tnn : chiffres");
+        mvwprintw(app_window, y_offset + 5, x_offset, "h / ? : Cacher cette aide");
+        mvwprintw(app_window, y_offset + 6, x_offset, "p : Revenir au coup "
+            "précédent");
+        mvwprintw(app_window, y_offset + 7, x_offset, "q : Quitter");
+    }
+    else
+    {
+        mvwhline(app_window, y_offset,     x_offset, ' ', COLS - 1);
+        mvwhline(app_window, y_offset + 2, x_offset, ' ', COLS - 1);
+        mvwhline(app_window, y_offset + 3, x_offset, ' ', COLS - 1);
+        mvwhline(app_window, y_offset + 4, x_offset, ' ', COLS - 1);
+        mvwhline(app_window, y_offset + 5, x_offset, ' ', COLS - 1);
+        mvwhline(app_window, y_offset + 6, x_offset, ' ', COLS - 1);
+        mvwhline(app_window, y_offset + 7, x_offset, ' ', COLS - 1);
+    }
+}
+
+
 /** Lit la chaîne de caractères saisie par l'utilisateur.
  *
  * \param userinput une chaîne de caractères correctement allouée. Passée par
@@ -80,8 +112,8 @@ extern void Sgui_RuntimeMessage(WINDOW* app_window, char* message,
 
     attron(COLOR_PAIR(1));
     sleep(3);
-    mvwhline (app_window, LINES - 1, 0, ' ', COLS);
-    mvwhline (app_window, LINES - 2, 36, ' ', COLS - 36);
+    mvwhline(app_window, LINES - 1, 0, ' ', COLS);
+    mvwhline(app_window, LINES - 2, 36, ' ', COLS - 36);
     refresh();
 }
 

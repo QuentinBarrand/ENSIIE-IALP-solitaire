@@ -179,11 +179,23 @@ extern int Sjeu_New(options* config)
     clear();
     #endif
 
-    int coord[4], turn = 0;
+    int coord[4], turn = 0, help_printed = FALSE;
     Stack* histo = Stack_New(25);
 
-    while(Sjeu_EstTermine(&jeu, config) == 0)
+    while(TRUE)
     {
+        if(Sjeu_EstTermine(&jeu, config) == 1)
+        {
+            /* Perdu */
+            break;
+
+        }
+        else if(Sjeu_EstTermine(&jeu, config) == 2)
+        {
+            /* Gagné ! */
+            break;
+        }
+
         turn++;
 
         Sjeu_Afficher(app_window, &jeu, turn);
@@ -208,7 +220,20 @@ extern int Sjeu_New(options* config)
             switch(userinput[0])
             {
                 case '?':
-                    /* Afficher l'aide */
+                case 'h':
+                    if(help_printed == TRUE)
+                    {
+                        Sgui_Help(app_window, jeu.width, FALSE);
+                        help_printed = FALSE;
+                    }
+                    else
+                    {
+                        Sgui_Help(app_window, jeu.width, TRUE);
+                        help_printed = TRUE;
+                    }
+                    
+                    turn--;
+                    continue;
 
                 case 'p':
                     if((a_annuler = (coup*)Stack_Pop(histo)) == NULL)
@@ -288,7 +313,7 @@ extern int Sjeu_New(options* config)
 
             case 3:
                 Sgui_RuntimeMessage(app_window, "La case centrale n'est pas "
-                    "libre.", ERROR);
+                    "occupée par un pion.", ERROR);
                 turn--;
                 break;
 
@@ -306,11 +331,6 @@ extern int Sjeu_New(options* config)
 
         turn--;
     }
-
-    if(Sjeu_EstTermine(&jeu, config) == 1)
-        /* Perdu */
-    else if(Sjeu_EstTermine(&jeu, config) == 2)
-        /* Gagné ! */
 
     getch();
 
@@ -339,7 +359,7 @@ static void Sjeu_Afficher(WINDOW* app_window, damier* jeu, int turn)
     int y_offset = 4;
 
     mvprintw(0, 0, "Solitaire v" VERSION);
-    mvprintw(y_offset - 2, x_offset + 5, "Tour n°%d", turn);
+    // mvprintw(y_offset - 2, x_offset + 5, "Tour n°%d", turn);
 
     for(c = 0; c < jeu->width; c++)
     {
@@ -501,7 +521,6 @@ static int Sjeu_EstTermine(damier* jeu, options* config)
                         return FUNC_NOT_OVER;
                 }
             }
-
         }
     }
 

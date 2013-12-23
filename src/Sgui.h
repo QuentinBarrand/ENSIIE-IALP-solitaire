@@ -27,6 +27,7 @@ typedef enum message_type
 
 
 /* Fonctions externes du module. */
+extern void    Sgui_Help(WINDOW*, int, int);
 extern WINDOW* Sgui_Initialiser();
 extern int     Sgui_ReadCoup(char*);
 extern void    Sgui_RuntimeMessage(WINDOW*, char*, message_type);
