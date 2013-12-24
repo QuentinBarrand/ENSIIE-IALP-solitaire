@@ -14,7 +14,6 @@
 /* Prototypes statiques */
 static void create_color();
 
-
 /*
  * Fonctions externes
  */
@@ -22,7 +21,6 @@ static void create_color();
 
 /** Affiche l'aide au cours du jeu.
  *
- * \param app_window la fenêtre curses de l'application.
  * \param table_width le nombre de colonnes du damier.
  * \param print Entier :
  *    - 0 : efface le contenu de la zone d'aide.
@@ -39,11 +37,12 @@ extern void Sgui_Help(int table_width, int print)
         mvprintw(y_offset + 2, x_offset, "LnnLnn : coordonnées");
         mvprintw(y_offset + 3, x_offset, "\tL : lettre");
         mvprintw(y_offset + 4, x_offset, "\tnn : chiffres");
-        mvprintw(y_offset + 5, x_offset, "h / ? : Cacher cette "
-            "aide");
-        mvprintw(y_offset + 6, x_offset, "p : Revenir au coup "
+        mvprintw(y_offset + 5, x_offset, "p : Revenir au coup "
             "précédent");
-        mvprintw(y_offset + 7, x_offset, "q : Quitter");
+        mvprintw(y_offset + 6, x_offset, "i : Indication");
+        mvprintw(y_offset + 8, x_offset, "? : Cacher cette "
+            "aide");
+        mvprintw(y_offset + 9, x_offset, "q : Quitter");
     }
     else
     {
@@ -55,24 +54,6 @@ extern void Sgui_Help(int table_width, int print)
         mvhline(y_offset + 6, x_offset, ' ', COLS - 1);
         mvhline(y_offset + 7, x_offset, ' ', COLS - 1);
     }
-}
-
-
-/** Lit la chaîne de caractères saisie par l'utilisateur.
- *
- * \param userinput une chaîne de caractères correctement allouée. Passée par
- *    référence.
- *
- * \return la longueur de la chaîne lue.
- */
-extern int Sgui_ReadCoup(char* userinput)
-{
-    echo();
-    mvprintw(LINES - 2, 0, "Saisissez un coup (? pour l'aide) : ");
-    getstr(userinput);
-    noecho();
-
-    return strlen(userinput);
 }
 
 
@@ -95,9 +76,26 @@ extern WINDOW* Sgui_Initialiser()
 }
 
 
+/** Lit la chaîne de caractères saisie par l'utilisateur.
+ *
+ * \param userinput une chaîne de caractères correctement allouée. Passée par
+ *    référence.
+ *
+ * \return la longueur de la chaîne lue.
+ */
+extern int Sgui_ReadCoup(char* userinput)
+{
+    echo();
+    mvprintw(LINES - 2, 0, "Saisissez un coup (? pour l'aide) : ");
+    getstr(userinput);
+    noecho();
+
+    return strlen(userinput);
+}
+
+
 /** Affiche un message pendant l'exécution de l'application.
  *
- * \param app_window la fenêtre curses de l'application.
  * \param message le message à afficher.
  * \param type le type de message à afficher:
  *    - SUCCES : message de succès, en vert.
@@ -105,8 +103,6 @@ extern WINDOW* Sgui_Initialiser()
  */
 extern void Sgui_RuntimeMessage(char* message, message_type type)
 {
-    create_color();
-
     if(type == SUCCESS)
         attron(COLOR_PAIR(3));
     else if(type == ERROR)
@@ -115,6 +111,7 @@ extern void Sgui_RuntimeMessage(char* message, message_type type)
     mvprintw(LINES - 1, 0, message);
     refresh();
 
+    create_color();
     attron(COLOR_PAIR(1));
     sleep(3);
     mvhline(LINES - 1, 0, ' ', COLS);
@@ -196,13 +193,14 @@ extern void Sgui_Terminer()
     endwin();
 }
 
+
 /*
  * Fonctions statiques
  */
 
 static void create_color()
 {
-    start_color();   /* Start color */
+    start_color();
     init_pair(1,  COLOR_WHITE, COLOR_BLACK);
     init_pair(2,  COLOR_RED,   COLOR_BLACK);
     init_pair(3,  COLOR_GREEN, COLOR_BLACK);

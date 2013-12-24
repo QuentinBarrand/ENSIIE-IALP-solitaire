@@ -132,7 +132,7 @@ extern int Sjeu_LoadOptions(options* config, int argc, char** argv)
  */
 extern int Sjeu_New(options* config)
 {
-    WINDOW* app_window = Sgui_Initialiser();
+    Sgui_Initialiser();
 
     /* Génération damier */
     damier jeu;
@@ -191,12 +191,19 @@ extern int Sjeu_New(options* config)
 
         if(statut_jeu == 1)
         {
-            /* Perdu */
+            attron(COLOR_PAIR(3));
+            mvprintw(7 + jeu.length, 4, "Vous avez gagné, bravo !");
+            mvprintw(8 + jeu.length, 4, "Appuyez sur une touche pour quitter.");
+            attron(COLOR_PAIR(1));
+            
             break;
         }
         else if(statut_jeu == 2)
         {
-            /* Gagné ! */
+            attron(COLOR_PAIR(2));
+            mvprintw(7 + jeu.length, 4, "Vous avez perdu :-(");
+            mvprintw(8 + jeu.length, 4, "Appuyez sur une touche pour quitter.");
+            attron(COLOR_PAIR(1));
             break;
         }
 
@@ -209,7 +216,7 @@ extern int Sjeu_New(options* config)
         /* Nombre de caractères saisis incorrect */
         if(nbchars == 0 || (nbchars > 1 && nbchars < 4) || nbchars > 4)
         {
-            Sgui_RuntimeMessage("Merci de saisir une commande valide", ERROR);
+            Sgui_RuntimeMessage("Merci de saisir une commande valide.", ERROR);
             continue;
         }
 
@@ -237,17 +244,19 @@ extern int Sjeu_New(options* config)
                     continue;
 
                 /* Hint : indication */
-                case 'h':
-                    sprintf(hint, "Hint : %c%d%c%d",
-                        'A' + possible.depart.a - 1,
-                        possible.depart.o,
-                        'A' + possible.arrivee.a - 1,
-                        possible.arrivee.o);
+                case 'I':
+                case 'i':
+                    sprintf(hint, "Indication : %c%d%c%d",
+                        'A' + possible.depart.a,
+                        possible.depart.o + 1,
+                        'A' + possible.arrivee.a,
+                        possible.arrivee.o + 1);
                     Sgui_RuntimeMessage(hint, INFO);
 
                     continue;
 
                 /* Tour précédent */
+                case 'P':
                 case 'p':
                     if((a_annuler = (coup*)Stack_Pop(histo)) == NULL)
                     {
@@ -264,6 +273,7 @@ extern int Sjeu_New(options* config)
                     continue;
                 
                 /* Quitter */
+                case 'Q':
                 case 'q':
                     Sgui_Terminer();
 
@@ -348,7 +358,6 @@ extern int Sjeu_New(options* config)
 
 /** Affiche le damier dans la fenêtre principale.
  *
- * \param app_window la fenêtre curses de l'application.
  * \param jeu l'instance de damier du jeu.
  */
 static void Sjeu_Afficher(damier* jeu)
@@ -515,7 +524,7 @@ static int Sjeu_EstTermine(damier* jeu, options* config, coup* possible)
                     coup_teste.arrivee.a = c2;
                     coup_teste.arrivee.o = l2;
 
-                    if(Sjeu_CoupPossible(jeu, config, coup_teste) == TRUE)
+                    if(Sjeu_CoupPossible(jeu, config, coup_teste) == 0)
                     {
                         possible->depart.a = c1;
                         possible->depart.o = l1;
