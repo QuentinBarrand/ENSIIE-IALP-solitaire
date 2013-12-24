@@ -18,6 +18,9 @@
 /** Type du message à afficher. */
 typedef enum message_type 
 {
+	/** Simple message d'information. */
+	INFO,
+
 	/** Message décrivant une opération réussie. */
 	SUCCESS,
 
@@ -27,12 +30,12 @@ typedef enum message_type
 
 
 /* Fonctions externes du module. */
-extern void    Sgui_Help(WINDOW*, int, int);
+extern void    Sgui_Help(int, int);
 extern WINDOW* Sgui_Initialiser();
 extern int     Sgui_ReadCoup(char*);
-extern void    Sgui_RuntimeMessage(WINDOW*, char*, message_type);
-extern void    Sgui_Splash(WINDOW*);
-extern void    Sgui_StartupError(WINDOW*, char*);
-extern void    Sgui_Terminer(WINDOW*);
+extern void    Sgui_RuntimeMessage(char*, message_type);
+extern void    Sgui_Splash();
+extern void    Sgui_StartupError(char*);
+extern void    Sgui_Terminer();
 
 #endif

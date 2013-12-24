@@ -30,11 +30,11 @@
 
 
 /* Prototypes statiques */
-static void Sjeu_Afficher(WINDOW*, damier*, int);
+static void Sjeu_Afficher(damier*);
 static void Sjeu_AnnulerCoup(damier*, coup);
 static int  Sjeu_CoupPossible(damier*, options*, coup);
 static int  Sjeu_Initialiser(options*, damier*, int);
-static int  Sjeu_EstTermine(damier*, options*);
+static int  Sjeu_EstTermine(damier*, options*, coup*);
 static int  Sjeu_Jouer(damier*, options*, coup);
 
 
@@ -172,33 +172,35 @@ extern int Sjeu_New(options* config)
 
     /* Affichage du splash screen - en RELEASE uniquement */
     #ifndef DEBUG
-    Sgui_Splash(app_window);
-    if(init != 0) Sgui_StartupError(app_window, error);
+    Sgui_Splash();
+    if(init != 0) Sgui_StartupError(error);
 
     getch();
     clear();
     #endif
 
-    int coord[4], turn = 0, help_printed = FALSE;
+    int coord[4], statut_jeu, help_printed = FALSE;
+    char hint[30];
+
     Stack* histo = Stack_New(25);
+    coup possible;
 
     while(TRUE)
     {
-        if(Sjeu_EstTermine(&jeu, config) == 1)
+        statut_jeu = Sjeu_EstTermine(&jeu, config, &possible);
+
+        if(statut_jeu == 1)
         {
             /* Perdu */
             break;
-
         }
-        else if(Sjeu_EstTermine(&jeu, config) == 2)
+        else if(statut_jeu == 2)
         {
             /* Gagné ! */
             break;
         }
 
-        turn++;
-
-        Sjeu_Afficher(app_window, &jeu, turn);
+        Sjeu_Afficher(&jeu);
     
         char userinput[MAX_INPUT];
         
@@ -207,8 +209,7 @@ extern int Sjeu_New(options* config)
         /* Nombre de caractères saisis incorrect */
         if(nbchars == 0 || (nbchars > 1 && nbchars < 4) || nbchars > 4)
         {
-            Sgui_RuntimeMessage(app_window, "Merci de saisir une commande "
-                "valide", ERROR);
+            Sgui_RuntimeMessage("Merci de saisir une commande valide", ERROR);
             continue;
         }
 
@@ -219,48 +220,57 @@ extern int Sjeu_New(options* config)
         {
             switch(userinput[0])
             {
+                /* Aide */
                 case '?':
-                case 'h':
                     if(help_printed == TRUE)
                     {
-                        Sgui_Help(app_window, jeu.width, FALSE);
+                        Sgui_Help(jeu.width, FALSE);
                         help_printed = FALSE;
                     }
                     else
                     {
-                        Sgui_Help(app_window, jeu.width, TRUE);
+                        Sgui_Help(jeu.width, TRUE);
                         help_printed = TRUE;
                     }
                     
-                    turn--;
+                    mvhline(LINES - 2, 36, ' ', COLS);
                     continue;
 
+                /* Hint : indication */
+                case 'h':
+                    sprintf(hint, "Hint : %c%d%c%d",
+                        'A' + possible.depart.a - 1,
+                        possible.depart.o,
+                        'A' + possible.arrivee.a - 1,
+                        possible.arrivee.o);
+                    Sgui_RuntimeMessage(hint, INFO);
+
+                    continue;
+
+                /* Tour précédent */
                 case 'p':
                     if((a_annuler = (coup*)Stack_Pop(histo)) == NULL)
                     {
-                        Sgui_RuntimeMessage(app_window, "Impossible de charger "
-                            "le tour précédent.", ERROR);
-                        turn--;
+                        Sgui_RuntimeMessage("Impossible de charger le tour "
+                            "précédent.", ERROR);
                     }
                     else
                     {                        
-                        Sgui_RuntimeMessage(app_window, "Retour au tour "
-                            "précédent.", SUCCESS);
+                        Sgui_RuntimeMessage("Retour au tour précédent.", 
+                            SUCCESS);
                         Sjeu_AnnulerCoup(&jeu, *a_annuler);
-                        turn -= 2;
                     }
 
                     continue;
                 
+                /* Quitter */
                 case 'q':
-                    Sgui_Terminer(app_window);
+                    Sgui_Terminer();
 
                     return EXIT_SUCCESS;
 
                 default:
-                    Sgui_RuntimeMessage(app_window, "Commande non reconnue.",
-                        ERROR);
-                    turn--;
+                    Sgui_RuntimeMessage("Commande non reconnue.", ERROR);
 
                     continue;
             }
@@ -270,15 +280,13 @@ extern int Sjeu_New(options* config)
         switch(coordutils_ToIntCoord(userinput, coord, jeu.width, jeu.length))
         {
             case 1:
-                Sgui_RuntimeMessage(app_window, "Votre saisie contient des "
-                    "caractères non standards.", ERROR);
-                turn--;
+                Sgui_RuntimeMessage("Votre saisie contient des caractères "
+                    "non standards.", ERROR);
                 continue;
 
             case 2:
-                Sgui_RuntimeMessage(app_window, "Votre saisie contient des "
-                    "valeurs menant hors du damier.", ERROR);
-                turn--;
+                Sgui_RuntimeMessage("Votre saisie contient des valeurs "
+                    "menant hors du damier.", ERROR);
                 continue;            
         }
         
@@ -291,50 +299,43 @@ extern int Sjeu_New(options* config)
         switch(Sjeu_Jouer(&jeu, config, *current_coup))
         {
             case 0:
-                Sjeu_Afficher(app_window, &jeu, turn + 1);
-                Sgui_RuntimeMessage(app_window, "Le coup a bien été joué !", 
-                    SUCCESS);
+                Sjeu_Afficher(&jeu);
+                Sgui_RuntimeMessage("Le coup a bien été joué !", SUCCESS);
 
                 Stack_Push(current_coup, histo);
 
                 continue;
 
             case 1:
-                Sgui_RuntimeMessage(app_window, "La case de départ n'est pas "
-                    "occupée par un pion.", ERROR);
-                turn--;
+                Sgui_RuntimeMessage("La case de départ n'est pas occupée par"
+                    " un pion.", ERROR);
                 break;
 
             case 2:
-                Sgui_RuntimeMessage(app_window, "La case d'arrivée n'est pas "
-                    "libre.", ERROR);
-                turn--;
+                Sgui_RuntimeMessage("La case d'arrivée n'est pas libre.", 
+                    ERROR);
                 break;
 
             case 3:
-                Sgui_RuntimeMessage(app_window, "La case centrale n'est pas "
-                    "occupée par un pion.", ERROR);
-                turn--;
+                Sgui_RuntimeMessage("La case centrale n'est pas occupée par "
+                    "un pion.", ERROR);
                 break;
 
             case 4:
-                Sgui_RuntimeMessage(app_window, "Le mouvement n'est pas "
-                    "autorisé par les optons de la ligne de commande.", ERROR);
-                turn--;
+                Sgui_RuntimeMessage("Le mouvement n'est pas autorisé par "
+                    "les optons de la ligne de commande.", ERROR);
                 break;
 
             case 5:
-                Sgui_RuntimeMessage(app_window, "La distance entre deux cases "
-                    "n'est pas égale à 2.", ERROR);
+                Sgui_RuntimeMessage("La distance entre deux cases n'est pas "
+                    "égale à 2.", ERROR);
                 break;
         }
-
-        turn--;
     }
 
     getch();
 
-    Sgui_Terminer(app_window);
+    Sgui_Terminer();
 
     return FALSE;
 }
@@ -349,32 +350,28 @@ extern int Sjeu_New(options* config)
  *
  * \param app_window la fenêtre curses de l'application.
  * \param jeu l'instance de damier du jeu.
- * \param turn le numéro du tour actuellement joué.
  */
-static void Sjeu_Afficher(WINDOW* app_window, damier* jeu, int turn)
+static void Sjeu_Afficher(damier* jeu)
 {
     int c, l;
 
     int x_offset = 2;
     int y_offset = 4;
 
-    mvprintw(0, 0, "Solitaire v" VERSION);
-    // mvprintw(y_offset - 2, x_offset + 5, "Tour n°%d", turn);
+    mvprintw(1, 7, "Solitaire v" VERSION);
 
     for(c = 0; c < jeu->width; c++)
     {
         /* Affichage de la première ligne (lettres) */
         mvprintw(y_offset, x_offset + 5 + (3 * c), "%c", 'A' + c);
-        mvwhline (app_window, y_offset + 1, x_offset + 3, 
-            '-', (jeu->width * 3));
+        mvhline(y_offset + 1, x_offset + 3, '-', (jeu->width * 3));
     }
 
     for(l = 0; l < jeu->length; l++)
     {
         /* Affichage de la première colonne (nombres) */
         mvprintw(y_offset + 2 + l, x_offset, "%d", l + 1);
-        mvwvline (app_window, y_offset + 2, x_offset + 2, 
-            '|', jeu->length);
+        mvvline (y_offset + 2, x_offset + 2, '|', jeu->length);
     }
 
     for(l = 0; l < jeu->length; l++)
@@ -397,6 +394,8 @@ static void Sjeu_Afficher(WINDOW* app_window, damier* jeu, int turn)
             }
         }
     }
+
+    mvprintw(y_offset + l + 3, 4, "Il reste %d pion(s)", jeu->nb_pion);
 }
 
 
@@ -494,14 +493,15 @@ static int Sjeu_CoupPossible(damier* jeu, options* config, coup current_coup)
  *    - 1 : le jeu est gagné.
  *    - 2 : le jeu est bloqué.
  */
-static int Sjeu_EstTermine(damier* jeu, options* config)
+static int Sjeu_EstTermine(damier* jeu, options* config, coup* possible)
 {
     const int FUNC_NOT_OVER = 0;
     const int FUNC_WIN      = 1;
     const int FUNC_BLOCKED  = 2;
 
     int l1, c1, l2, c2;
-    
+    coup coup_teste;
+
     for(c1 = 0; c1 < jeu->width; c1++)
     {
         for(l1 = 0; l1 < jeu->length; l1++)
@@ -510,15 +510,20 @@ static int Sjeu_EstTermine(damier* jeu, options* config)
             {
                 for(l2 = 0; l2 < jeu->length; l2++)
                 {
-                    coup coup_teste;
-
                     coup_teste.depart.a = c1;
                     coup_teste.depart.o = l1;
                     coup_teste.arrivee.a = c2;
                     coup_teste.arrivee.o = l2;
 
-                    if(Sjeu_CoupPossible(jeu, config, coup_teste) != TRUE) 
+                    if(Sjeu_CoupPossible(jeu, config, coup_teste) == TRUE)
+                    {
+                        possible->depart.a = c1;
+                        possible->depart.o = l1;
+                        possible->arrivee.a = c2;
+                        possible->arrivee.o = l2;
+
                         return FUNC_NOT_OVER;
+                    }
                 }
             }
         }
@@ -598,6 +603,7 @@ static int Sjeu_Initialiser(options* config, damier* jeu, int def)
 
                     case '*':
                         jeu->table[c][l] = PION;
+                        jeu->nb_pion++;
                         break;
 
                     default:
@@ -606,8 +612,6 @@ static int Sjeu_Initialiser(options* config, damier* jeu, int def)
                 }
             }
         }
-
-        jeu->nb_pion++;
     }
     else
     {
@@ -634,9 +638,9 @@ static int Sjeu_Initialiser(options* config, damier* jeu, int def)
 
         jeu->width = T_TAILLE;
         jeu->length = T_TAILLE;
-    }
 
-    jeu->nb_pion = 24;
+        jeu->nb_pion = 24;
+    }
 
     return FUNC_SUCCESS;
 }
@@ -688,4 +692,6 @@ static void Sjeu_AnnulerCoup(damier* jeu, coup a_annuler)
 
     coordonnees centrale = Sjeu_CaseCentrale(a_annuler);
     jeu->table[centrale.a][centrale.o] = PION;
+
+    jeu->nb_pion++;
 }

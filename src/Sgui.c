@@ -20,34 +20,40 @@ static void create_color();
  */
 
 
-/**
+/** Affiche l'aide au cours du jeu.
  *
+ * \param app_window la fenêtre curses de l'application.
+ * \param table_width le nombre de colonnes du damier.
+ * \param print Entier :
+ *    - 0 : efface le contenu de la zone d'aide.
+ *    - 1 : affiche le contenu de la done d'aide.
  */
-extern void Sgui_Help(WINDOW* app_window, int table_width, int print)
+extern void Sgui_Help(int table_width, int print)
 {
     int x_offset = 6 + table_width * 3 + 10;
     int y_offset = 4;
 
     if(print == TRUE)
     {
-        mvwprintw(app_window, y_offset,     x_offset, "Aide :");
-        mvwprintw(app_window, y_offset + 2, x_offset, "LnnLnn : coordonnées");
-        mvwprintw(app_window, y_offset + 3, x_offset, "\tL : lettre");
-        mvwprintw(app_window, y_offset + 4, x_offset, "\tnn : chiffres");
-        mvwprintw(app_window, y_offset + 5, x_offset, "h / ? : Cacher cette aide");
-        mvwprintw(app_window, y_offset + 6, x_offset, "p : Revenir au coup "
+        mvprintw(y_offset,     x_offset, "Aide :");
+        mvprintw(y_offset + 2, x_offset, "LnnLnn : coordonnées");
+        mvprintw(y_offset + 3, x_offset, "\tL : lettre");
+        mvprintw(y_offset + 4, x_offset, "\tnn : chiffres");
+        mvprintw(y_offset + 5, x_offset, "h / ? : Cacher cette "
+            "aide");
+        mvprintw(y_offset + 6, x_offset, "p : Revenir au coup "
             "précédent");
-        mvwprintw(app_window, y_offset + 7, x_offset, "q : Quitter");
+        mvprintw(y_offset + 7, x_offset, "q : Quitter");
     }
     else
     {
-        mvwhline(app_window, y_offset,     x_offset, ' ', COLS - 1);
-        mvwhline(app_window, y_offset + 2, x_offset, ' ', COLS - 1);
-        mvwhline(app_window, y_offset + 3, x_offset, ' ', COLS - 1);
-        mvwhline(app_window, y_offset + 4, x_offset, ' ', COLS - 1);
-        mvwhline(app_window, y_offset + 5, x_offset, ' ', COLS - 1);
-        mvwhline(app_window, y_offset + 6, x_offset, ' ', COLS - 1);
-        mvwhline(app_window, y_offset + 7, x_offset, ' ', COLS - 1);
+        mvhline(y_offset,     x_offset, ' ', COLS - 1);
+        mvhline(y_offset + 2, x_offset, ' ', COLS - 1);
+        mvhline(y_offset + 3, x_offset, ' ', COLS - 1);
+        mvhline(y_offset + 4, x_offset, ' ', COLS - 1);
+        mvhline(y_offset + 5, x_offset, ' ', COLS - 1);
+        mvhline(y_offset + 6, x_offset, ' ', COLS - 1);
+        mvhline(y_offset + 7, x_offset, ' ', COLS - 1);
     }
 }
 
@@ -97,8 +103,7 @@ extern WINDOW* Sgui_Initialiser()
  *    - SUCCES : message de succès, en vert.
  *    - ERROR : message d'erreur, en rouge.
  */
-extern void Sgui_RuntimeMessage(WINDOW* app_window, char* message, 
-    message_type type)
+extern void Sgui_RuntimeMessage(char* message, message_type type)
 {
     create_color();
 
@@ -107,29 +112,26 @@ extern void Sgui_RuntimeMessage(WINDOW* app_window, char* message,
     else if(type == ERROR)
         attron(COLOR_PAIR(2));
 
-    mvwprintw(app_window, LINES - 1, 0, message);
+    mvprintw(LINES - 1, 0, message);
     refresh();
 
     attron(COLOR_PAIR(1));
     sleep(3);
-    mvwhline(app_window, LINES - 1, 0, ' ', COLS);
-    mvwhline(app_window, LINES - 2, 36, ' ', COLS - 36);
+    mvhline(LINES - 1, 0, ' ', COLS);
+    mvhline(LINES - 2, 36, ' ', COLS - 36);
     refresh();
 }
 
 
-/** Affiche l'écrand de lancement.
- *
- * \param app_window la fenêtre curses de l'application.
- */
-extern void Sgui_Splash(WINDOW* app_window)
+/** Affiche l'écrand de lancement. */
+extern void Sgui_Splash()
 {
     #ifdef VERSION
-    mvwprintw(app_window, 0, 0, "Version : " VERSION);
+    mvprintw(0, 0, "Version : " VERSION);
     #endif
 
     #ifdef BUILD
-    mvwprintw(app_window, 1, 0, "Build : " BUILD);
+    mvprintw(1, 0, "Build : " BUILD);
     #endif
 
     int x_offset = (LINES / 2) - 4;
@@ -138,64 +140,57 @@ extern void Sgui_Splash(WINDOW* app_window)
     if(COLS >= 65)
     {
         /* THE splash ;-) */
-        mvwprintw(app_window, x_offset + 0, y_offset, 
+        mvprintw(x_offset + 0, y_offset, 
             " ____            ___        __                                ");
-        mvwprintw(app_window, x_offset + 1, y_offset, 
+        mvprintw(x_offset + 1, y_offset, 
             "/\\  _`\\         /\\_ \\    __/\\ \\__           __           "
             "     ");
-        mvwprintw(app_window, x_offset + 2, y_offset, 
+        mvprintw(x_offset + 2, y_offset, 
             "\\ \\,\\L\\_\\    ___\\//\\ \\  /\\_\\ \\ ,_\\    __   /\\_\\"
             "  _ __    __   ");
-        mvwprintw(app_window, x_offset + 3, y_offset, 
+        mvprintw(x_offset + 3, y_offset, 
             " \\/_\\__ \\   / __`\\\\ \\ \\ \\/\\ \\ \\ \\/  /'__`\\ \\/\\ \\"
             "/\\`'__\\/'__`\\ ");
-        mvwprintw(app_window, x_offset + 4, y_offset, 
+        mvprintw(x_offset + 4, y_offset, 
             "   /\\ \\L\\ \\/\\ \\L\\ \\\\_\\ \\_\\ \\ \\ \\ \\_/\\ \\L\\.\\_"
             "\\ \\ \\ \\ \\//\\  __/ ");
-        mvwprintw(app_window, x_offset + 5, y_offset, 
+        mvprintw(x_offset + 5, y_offset, 
             "   \\ `\\____\\ \\____//\\____\\\\ \\_\\ \\__\\ \\__/.\\_\\\\ "
             "\\_\\ \\_\\\\ \\____\\");
-        mvwprintw(app_window, x_offset + 6, y_offset, 
+        mvprintw(x_offset + 6, y_offset, 
             "    \\/_____/\\/___/ \\/____/ \\/_/\\/__/\\/__/\\/_/ \\/_/\\/_/"
             " \\/____/");
     }
     else
-        mvwprintw(app_window, LINES / 2, COLS / 2 - 4, "SOLITAIRE");
+        mvprintw(LINES / 2, COLS / 2 - 4, "SOLITAIRE");
 
-    mvwprintw(app_window, x_offset + 8, COLS / 2 - 14, "ENSIIE / IALP - FIPA6 "
-        "- 2013");  
+    mvprintw(x_offset + 8, COLS / 2 - 14, "ENSIIE / IALP - FIPA6 - 2013");  
 
-    mvwprintw(app_window, LINES - 2, COLS / 2 - 20, "Appuyez sur une touche "
-        "pour commencer !");  
+    mvprintw(LINES - 2, COLS / 2 - 20, "Appuyez sur une touche pour "
+        "commencer !");  
 }
 
 
 /** Affiche un message au démarrage de l'application.
  *
- * \param app_window la fenêtre curses de l'application.
  * \param message le message à afficher.
  */
-extern void Sgui_StartupError(WINDOW* app_window, char* message)
+extern void Sgui_StartupError(char* message)
 {
     int x_offset = (LINES / 2) + 6;
 
     create_color();
     attron(COLOR_PAIR(2));
-    mvwprintw(app_window, x_offset, (COLS / 2) - (strlen(message) / 2),
-        message);
+    mvprintw(x_offset, (COLS / 2) - (strlen(message) / 2), message);
     attron(COLOR_PAIR(1));
 }
 
 
-/** Termine la fenêtre principale de l'application.
- *
- * \param app_window la fenêtre curses de l'application.
- */
-extern void Sgui_Terminer(WINDOW* app_window)
+/** Termine la fenêtre principale de l'application. */
+extern void Sgui_Terminer()
 {
     clear();
-    mvwprintw(app_window, LINES / 2, COLS / 2 - 17, "Merci d'avoir joué, à "
-        "bientôt !");
+    mvprintw(LINES / 2, COLS / 2 - 17, "Merci d'avoir joué, à bientôt !");
     refresh();
     sleep(3);
     endwin();

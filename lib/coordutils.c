@@ -27,7 +27,7 @@ static int getAbsByLetter(char);
  * \param coord coordonnées calculées par la fonction et passées par adresse 
  *    pour récupérer son contenu.
  * \param width la largeur du damier.
- * \param length la longueur du damieR.
+ * \param length la longueur du damier.
  *
  * \return un code de statut :
  *    - 0 le calcul s'est déroulé correctement.

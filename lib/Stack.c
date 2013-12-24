@@ -47,7 +47,7 @@ void Stack_Free(Stack* stack)
 
 /** Returns the current number of elements of a Stack.
  *
- * \param pointer to the Stack of which we want to get the number of elements.
+ * \param stack pointer to the Stack of which we want to get the number of elements.
  *
  * \return the current number of elements into the specified Stack.
  */
