@@ -496,6 +496,7 @@ static int Sjeu_CoupPossible(damier* jeu, options* config, coup current_coup)
  *
  * \param jeu l'instance de damier.
  * \param config la configuration de l'application.
+ * \param possible pointeur vers le premier coup possible (le cas échéant).
  *
  * \return un code de statut :
  *    - 0 : le jeu n'est pas terminé.

@@ -4,12 +4,17 @@
 Ce logiciel permet de jouer au Solitaire.
 
 ## VERSION ##
-Version 2.0
+Version 3.0
 
 ## AUTHORS ##
 Quentin Barrand <quentin.barrand@ensiie.fr>
 
 ## CHANGELOG ##
+### 3.0 ###
+* Ajout de l'affichage curses.
+* Ajout de la possibilité d'obtenir une suggestion.
+* Correction de bugs relatifs à la fin du jeu.
+
 ### 2.0.1 ###
 * Corrections de bugs de la version 2.0.
 
@@ -41,7 +46,7 @@ La documentation exhaustive du code source de ce programme est disponible
 	- option -d : les déplacements en diagonale sont permis.
     - option <str> : chemin vers le fichier de configuration.
 
-Les options -n et -d peuvent être utilisées simultanément.
+Les options -n, -d et <str> peuvent être utilisées simultanément.
 
 ## COPYING / LICENSE ##
 Ce programme est livré sous les termes de la licence GNU GPL v2.0

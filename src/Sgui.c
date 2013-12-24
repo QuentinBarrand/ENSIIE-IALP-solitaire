@@ -198,6 +198,8 @@ extern void Sgui_Terminer()
  * Fonctions statiques
  */
 
+
+/** Créé les paires de couleurs pour l'affichage coloré. */
 static void create_color()
 {
     start_color();
